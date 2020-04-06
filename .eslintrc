@@ -1,0 +1,30 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {
+    "React": true,
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+    },
+  },
+  "plugins": [
+    "mocha"
+  ],
+  "rules": {
+    semi: [2, "never"],
+    max-len: 0,
+    "react/require-default-props": "off",
+    "import/no-unresolved": 0,
+    "react/forbid-prop-types": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/prefer-default-export": "off",
+    "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx"] }]
+  }
+}
