@@ -58,14 +58,12 @@ export const loginUser = data => (
   }
 )
 
-export const authenticateByCredentials = ({ email, password }) => (
+export const authenticateByCredentials = (params) => (
   (dispatch) => {
     dispatch(authenticateUserRequest())
+    const url = '/admin/login'
 
-    return API.post(
-      '/auth/login',
-      { email, password },
-    ).then(
+    return API.post(url, params).then(
       (response) => {
         if (response.data.status) {
           dispatch(loginUser(response.data.data))

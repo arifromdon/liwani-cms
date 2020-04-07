@@ -5,9 +5,7 @@ import { getAccessToken, removeToken } from 'actions/Auth'
 import { mainPersistConfig } from 'store/configureStore'
 import { purgeStoredState } from 'redux-persist'
 
-const apiBaseURL = config.API_URL
-
-axios.defaults.baseURL = apiBaseURL
+axios.defaults.baseURL = config.api_url
 axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
 
 axios.interceptors.request.use(
@@ -56,6 +54,12 @@ export default class API {
 
   static put(path, data = {}, options = {}) {
     return axios.put(
+      path, data, { ...options },
+    )
+  }
+
+  static patch(path, data = {}, options = {}) {
+    return axios.patch(
       path, data, { ...options },
     )
   }

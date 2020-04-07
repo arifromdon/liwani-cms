@@ -19,8 +19,20 @@ const Login = (props) => {
         <Card>
           <h3 className="box-title m-b-20">Sign In</h3>
           <Form className="form-signin p-1 form-material" onSubmit={onSubmit}>
-            <Input onChange={onChange} value={form.email || ''} name="email" type="email" placeholder="Email Address" />
-            <Input onChange={onChange} value={form.password || ''} name="password" type="password" placeholder="Password" />
+            <Input
+              onChange={onChange}
+              value={form.email || ''}
+              name="email"
+              type="email"
+              placeholder="Email Address"
+            />
+            <Input
+              onChange={onChange}
+              value={form.password || ''}
+              name="password"
+              type="password"
+              placeholder="Password"
+            />
 
             {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
