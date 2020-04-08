@@ -18,6 +18,7 @@ import Blog from 'containers/blog/Blog'
 import CreateBlog from 'containers/blog/CreateBlog'
 import EditBlog from 'containers/blog/EditBlog'
 import LogoCompany from 'containers/logo-company/LogoCompany'
+import Price from 'containers/price'
 
 const PublicRoute = (props) => {
   const {
@@ -71,6 +72,7 @@ const Root = ({ store, persistor }) => (
           <PublicRoute exact path="/blog" component={Blog} />
           <PublicRoute path="/blog/create" exact component={CreateBlog} />
           <PublicRoute path="/blog/:id/edit" exact component={EditBlog} />
+          <PublicRoute exact path="/price" component={Price} />
           <PublicRoute component={NotFound} />
         </Switch>
       </Router>

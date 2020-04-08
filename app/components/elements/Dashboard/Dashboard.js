@@ -46,57 +46,17 @@ class Dashboard extends Component {
           <Menu theme="dark" mode="inline" defaultSelectedKeys={[topik]} style={{ marginBottom: '50px' }}>
             <Menu.Item key="voucher">
               <Link to="/voucher">
-                <span className="nav-text">Voucher</span>
+                <span className="nav-text">Subscription</span>
               </Link>
             </Menu.Item>
             <Menu.Item key="categoryVoucher">
               <Link to="/category-voucher">
-                <span className="nav-text">Kategori Voucher</span>
+                <span className="nav-text">Price</span>
               </Link>
             </Menu.Item>
             <Menu.Item key="partner">
               <Link to="/partner">
-                <span className="nav-text">Partner</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="partnerAddress">
-              <Link to="/partner-address">
-                <span className="nav-text">Partner Address</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="faq">
-              <Link to="/faq">
-                <span className="nav-text">FAQ</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="categoryFaq">
-              <Link to="/category-faq">
-                <span className="nav-text">Kategori Faq</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="page">
-              <Link to="/page">
-                <span className="nav-text">Page</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="categoryPages">
-              <Link to="/category-pages">
-                <span className="nav-text">Kategori Page</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="slider">
-              <Link to="/slider">
-                <span className="nav-text">Slider</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="categorySlider">
-              <Link to="/category-slider">
-                <span className="nav-text">Kategori Slider</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="business">
-              <Link to="/business">
-                <span className="nav-text">Tipe Bisnis</span>
+                <span className="nav-text">Location</span>
               </Link>
             </Menu.Item>
           </Menu>

@@ -41,7 +41,7 @@ export const redirectToLogin = () => (
   Browser.setWindowHref('/')
 )
 
-const getAccessToken = () => (
+export const getAccessToken = () => (
   Cookies.get(config.auth_cookie_name)
 )
 
@@ -49,12 +49,12 @@ export const loginUser = data => (
   (dispatch) => {
     dispatch(authenticateUserSuccess(data))
 
-    Cookies.set(config.auth_cookie_name, data.access_token, {
+    Cookies.set(config.auth_cookie_name, data.auth_token, {
       path: '/',
       domain: Browser.getRootDomain(),
     })
 
-    history.push('/welcome')
+    history.push('/highlight')
   }
 )
 
@@ -65,7 +65,7 @@ export const authenticateByCredentials = (params) => (
 
     return API.post(url, params).then(
       (response) => {
-        if (response.data.status) {
+        if (response.data.meta.status) {
           dispatch(loginUser(response.data.data))
         } else {
           dispatch(updateAuthCurrentUser(null))

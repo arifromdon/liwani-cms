@@ -15,6 +15,7 @@ axios.interceptors.request.use(
 
       if (token) {
         response.headers.Authorization = token
+        response.headers.token = token
       }
     }
 
@@ -25,7 +26,7 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   (response) => {
-    if (response.data.data) {
+    if (response.data.meta) {
       if (response.data.data.message === 'Token signature is expired') {
         purgeStoredState(mainPersistConfig).then(() => {
           removeToken()

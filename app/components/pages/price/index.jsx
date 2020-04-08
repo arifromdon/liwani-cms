@@ -8,15 +8,15 @@ import { isEmpty } from 'lodash'
 
 const columns = ['Name', 'Posisi' ,'Action']
 
-const BlogPage = ({
+const PricePage = ({
   history, categoryTerm, onDelete, handlePageChange,
 }) => (
-  <Dashboard topik="blog">
+  <Dashboard topik="price">
     <HeaderPage
-      list={['Home', 'Blog']}
+      list={['Home', 'Price']}
       active="Blog"
     >
-      Blog
+      Price
     </HeaderPage>
     <div className="row m-b-30 ">
       <div className="offset-md-10 col-md-2">
@@ -29,36 +29,36 @@ const BlogPage = ({
     </div>
     <Card>
       <BasicTable columns={columns}>
-          <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>
-              <button
-                type="button"
-                className="icon-button"
-                onClick={() => history.push(`/blog/1/edit`)}
-              >
-                <Icon type="edit" />
-              </button>
-              <button
-                type="button"
-                className="icon-button"
-                onClick={() => false}
-              >
-                <Icon type="delete" />
-              </button>
-            </td>
-          </tr>
+        <tr>
+          <td>-</td>
+          <td>-</td>
+          <td>
+            <button
+              type="button"
+              className="icon-button"
+              onClick={() => history.push(`/blog/1/edit`)}
+            >
+              <Icon type="edit" />
+            </button>
+            <button
+              type="button"
+              className="icon-button"
+              onClick={() => false}
+            >
+              <Icon type="delete" />
+            </button>
+          </td>
+        </tr>
       </BasicTable>
     </Card>
   </Dashboard>
 )
 
-BlogPage.propTypes = {
+PricePage.propTypes = {
   categoryTerm: PropTypes.any,
   onDelete: PropTypes.func,
   history: PropTypes.any,
   handlePageChange: PropTypes.func,
 }
 
-export default BlogPage
+export default PricePage
