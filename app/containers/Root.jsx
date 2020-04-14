@@ -10,15 +10,9 @@ import PrivateLayout from 'containers/layouts/PrivateLayout'
 
 import Login from 'containers/login/Login'
 import NotFound from 'containers/NotFound'
-import Welcome from 'containers/welcome/Welcome'
-import Highlight from 'containers/highlight/Highlight'
-import CreateHighlight from 'containers/highlight/CreateHighlight'
-import EditHighlight from 'containers/highlight/EditHighlight'
-import Blog from 'containers/blog/Blog'
-import CreateBlog from 'containers/blog/CreateBlog'
-import EditBlog from 'containers/blog/EditBlog'
-import LogoCompany from 'containers/logo-company/LogoCompany'
-import Price from 'containers/price'
+import Location from 'containers/location'
+import Subscription from 'containers/subscription'
+import Forgot from 'containers/forgot'
 
 const PublicRoute = (props) => {
   const {
@@ -64,15 +58,9 @@ const Root = ({ store, persistor }) => (
       <Router history={history}>
         <Switch>
           <PublicRoute redirect exact path="/" component={Login} />
-          <PublicRoute path="/welcome" component={Welcome} />
-          <PublicRoute exact path="/highlight" component={Highlight} />
-          <PublicRoute path="/highlight/create" exact component={CreateHighlight} />
-          <PublicRoute path="/highlight/:id/edit" exact component={EditHighlight} />
-          <PublicRoute exact path="/logo-company" exact component={LogoCompany} />
-          <PublicRoute exact path="/blog" component={Blog} />
-          <PublicRoute path="/blog/create" exact component={CreateBlog} />
-          <PublicRoute path="/blog/:id/edit" exact component={EditBlog} />
-          <PublicRoute exact path="/price" component={Price} />
+          <PublicRoute exact path="/location" component={Location} />
+          <PublicRoute exact path="/subscription" component={Subscription} />
+          <PublicRoute exact path="/forgot-password" component={Forgot} />
           <PublicRoute component={NotFound} />
         </Switch>
       </Router>

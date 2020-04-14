@@ -1,4 +1,6 @@
 import API from 'utils/API'
+import history from 'utils/history'
+import { message } from 'antd'
 import {
   FORGOT_PASS_REQUEST,
   FORGOT_PASS_SUCCESS,
@@ -26,10 +28,13 @@ export const fetchForgotPassword = (params) => (
 
     return API.patch(url, params).then(
       (response) => {
-        if (response.data.status) {
+        if (response.data.meta.status) {
           dispatch(forgotPasswordSuccess(response.data.data))
+          message.success(response.data.meta.message)
+          history.push('/')
         } else {
-          dispatch(forgotPasswordFailure(response.data.message))
+          dispatch(forgotPasswordFailure(response.data.meta.message))
+          message.error(response.data.meta.message)
         }
       },
     ).catch((err) => {

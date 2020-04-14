@@ -2,13 +2,12 @@
 /* eslint-disable react/prefer-stateless-function */
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Layout, Menu } from 'antd'
 import { Link } from 'react-router-dom'
-
 import { clearCurrentUser } from 'actions/Auth'
+// import logo from 'assets/images/logo-pinsar.png'
 
 const {
   Header, Content, Sider,
@@ -28,6 +27,7 @@ class Dashboard extends Component {
             height: '100%',
             zIndex: 1,
             overflowY: 'scroll',
+            background: '#21242c'
           }}
           width="240"
           breakpoint="lg"
@@ -43,26 +43,28 @@ class Dashboard extends Component {
           <div className="header-menu">
             MENU
           </div>
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={[topik]} style={{ marginBottom: '50px' }}>
-            <Menu.Item key="voucher">
-              <Link to="/voucher">
-                <span className="nav-text">Subscription</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="categoryVoucher">
-              <Link to="/category-voucher">
-                <span className="nav-text">Price</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="partner">
-              <Link to="/partner">
+          <Menu theme="dark" mode="inline" defaultSelectedKeys={[topik]} style={{ background: '#21242c', marginBottom: '50px' }}>
+            <Menu.Item key="location">
+              <Link to="/location">
                 <span className="nav-text">Location</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="subscription">
+              <Link to="/subscription">
+                <span className="nav-text">Subscription</span>
               </Link>
             </Menu.Item>
           </Menu>
         </Sider>
         <Layout className="contentLayout" style={{ background: '#f4f6f9' }}>
-          <Header style={{ background: '#fff', padding: 0 }}>
+          <Header style={{
+            background: '#21242c',
+            padding: 0,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignContent: 'center',
+          }}>
+            <h3 className="align-self-center ml-4 mb-0">PINSAR</h3>
             <div className="header-right">
               <button
                 type="button"

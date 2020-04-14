@@ -14,6 +14,7 @@ import CardTitle from './Card/CardTitle'
 import DatePickerComponent from './Form/DatePicker'
 import Pagination from './Pagination'
 import Ckeditor from './Form/Ckeditor'
+import ModalItem from './Modal'
 
 export {
   Card,
@@ -32,4 +33,5 @@ export {
   DatePickerComponent,
   Pagination,
   Ckeditor,
+  ModalItem,
 }

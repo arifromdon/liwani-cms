@@ -7,6 +7,7 @@ import { purgeStoredState } from 'redux-persist'
 
 axios.defaults.baseURL = config.api_url
 axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
+// axios.defaults.headers['Content-Type'] = 'application/json'
 
 axios.interceptors.request.use(
   (response) => {
@@ -14,8 +15,7 @@ axios.interceptors.request.use(
       const token = getAccessToken()
 
       if (token) {
-        response.headers.Authorization = token
-        response.headers.token = token
+        response.headers.Authorization = `Bearer ${token}`
       }
     }
 
@@ -27,7 +27,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (response) => {
     if (response.data.meta) {
-      if (response.data.data.message === 'Token signature is expired') {
+      if (response.data.meta.message === 'Token signature is expired') {
         purgeStoredState(mainPersistConfig).then(() => {
           removeToken()
           Browser.setWindowHref('/login')

@@ -54,7 +54,7 @@ export const loginUser = data => (
       domain: Browser.getRootDomain(),
     })
 
-    history.push('/highlight')
+    history.push('/location')
   }
 )
 

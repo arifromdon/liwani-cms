@@ -12,7 +12,7 @@ export const mapStateToProps = (state) => {
   }
 }
 
-const publicComponent = (Component, redirect = false, redirectPath = '/welcome') => compose(
+const publicComponent = (Component, redirect = false, redirectPath = '/location') => compose(
   connect(
     mapStateToProps,
   ),

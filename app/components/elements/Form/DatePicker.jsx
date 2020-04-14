@@ -18,7 +18,7 @@ const DatePickerComponent = ({
     <DatePicker
       placeholder={placeholder}
       onChange={onChange}
-      value={value}
+      // value={value}
       format={dateFormat}
     />
   </div>
