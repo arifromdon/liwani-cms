@@ -1,27 +1,26 @@
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
-const HeaderPage = ({ children, list, active }) => (
-  <div className="row header-page">
-    <div className="col-md-5 align-self-center">
-      <h3 className="text-themecolor">{children}</h3>
-    </div>
-    <div className="col-md-7 align-self-center">
-      <div className="breadcrumb">
-        {list.map(key => (
-          <div className={`breadcrumb-item ${active === key && 'active'}`} key={Math.random()}>
-            {key}
-          </div>
-        ))
-        }
+const HeaderPage = ({ active, link, textLink }) => (
+  <div className="container-fluid">
+    <div className="row align-items-center">
+      <div className={link !== '' ? 'col-10' : 'col-12'}>
+        <h2 className="title-page">{active}</h2>
       </div>
+      {
+        link !== '' &&
+        <div className="col-2">
+          <Link to={link}>{textLink}</Link>
+        </div>
+      }
     </div>
   </div>
 )
 
 HeaderPage.propTypes = {
-  children: PropTypes.any,
-  list: PropTypes.any,
   active: PropTypes.any,
+  link: PropTypes.string,
+  textLink: PropTypes.string,
 }
 
 export default HeaderPage

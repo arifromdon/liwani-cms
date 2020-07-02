@@ -4,6 +4,7 @@ import {
 } from 'components/elements'
 import { Form, Alert, Spinner } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import logo from 'assets/images/logo_liwani.png'
 
 const Login = (props) => {
   const {
@@ -17,6 +18,7 @@ const Login = (props) => {
   return (
     <div className="form-container">
       <div className="form-box">
+        <img src={logo} className="w-50 d-block mx-auto mb-4"/>
         {
           isAuthenticating ? (
             <div className="wrapper-loading">
@@ -27,7 +29,7 @@ const Login = (props) => {
             </div>
           ) : (
             <Card>
-              <h3 className="box-title m-b-20">Sign In</h3>
+              <h3 className="box-title m-b-20 text-center">Sign In</h3>
               <Form className="form-signin p-1 form-material" onSubmit={onSubmit}>
                 <Input
                   onChange={onChange}
@@ -46,17 +48,15 @@ const Login = (props) => {
 
                 {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
-                <div className="form-group d-flex justify-content-between align-items-center">
-                  <Checkbox
-
-                    name="forgot-password"
-                  />
+                <div className="form-group d-flex justify-content-end align-items-center">
                   <Link to='/forgot-password'>
-                    Forgot Password
+                    <small>Forgot Password</small>
                   </Link>
                 </div>
 
-                <Button disabled={isAuthenticating} type="submit">Sign in</Button>
+                <Link to="/dashboard">
+                  <Button disabled={isAuthenticating} type="submit">Sign in</Button>
+                </Link>
               </Form>
             </Card>
           )

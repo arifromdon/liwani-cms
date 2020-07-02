@@ -13,8 +13,8 @@ import UploadComponent from './Form/Upload'
 import CardTitle from './Card/CardTitle'
 import DatePickerComponent from './Form/DatePicker'
 import Pagination from './Pagination'
-import Ckeditor from './Form/Ckeditor'
 import ModalItem from './Modal'
+import BarChart from './Chart'
 
 export {
   Card,
@@ -32,6 +32,6 @@ export {
   CardTitle,
   DatePickerComponent,
   Pagination,
-  Ckeditor,
   ModalItem,
+  BarChart
 }

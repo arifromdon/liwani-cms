@@ -10,8 +10,11 @@ import PrivateLayout from 'containers/layouts/PrivateLayout'
 
 import Login from 'containers/login/Login'
 import NotFound from 'containers/NotFound'
-import Location from 'containers/location'
-import Subscription from 'containers/subscription'
+import Dashboard from 'containers/dashboard'
+import Stock from 'containers/stock'
+import Recap from 'containers/recap'
+import Absent from 'containers/absent'
+import Salary from 'containers/salary'
 import Forgot from 'containers/forgot'
 
 const PublicRoute = (props) => {
@@ -58,9 +61,12 @@ const Root = ({ store, persistor }) => (
       <Router history={history}>
         <Switch>
           <PublicRoute redirect exact path="/" component={Login} />
-          <PublicRoute exact path="/location" component={Location} />
-          <PublicRoute exact path="/subscription" component={Subscription} />
           <PublicRoute exact path="/forgot-password" component={Forgot} />
+          <PublicRoute exact path="/dashboard" component={Dashboard} />
+          <PublicRoute exact path="/stock" component={Stock} />
+          <PublicRoute exact path="/recap" component={Recap} />
+          <PublicRoute exact path="/absent" component={Absent} />
+          <PublicRoute exact path="/salary" component={Salary} />
           <PublicRoute component={NotFound} />
         </Switch>
       </Router>

@@ -4,11 +4,12 @@ import { Modal, Button } from 'react-bootstrap'
 const ModalItem = ({
   show,
   modalBody,
-  modalHeader
+  modalHeader,
+  modalClose
 }) => (
   <Modal
     show={show}
-    size="lg"
+    onHide={modalClose}
     aria-labelledby="contained-modal-title-vcenter"
     centered
   >
@@ -27,6 +28,7 @@ ModalItem.propTypes = {
   show: PropTypes.bool,
   modalBody: PropTypes.any,
   modalHeader: PropTypes.string,
+  modalClose: PropTypes.func,
 }
 
 export default ModalItem
