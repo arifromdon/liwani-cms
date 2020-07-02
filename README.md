@@ -1,10 +1,5 @@
-# ClappingApe React Boilerplate
-
-ClappingApe React Boilerplate React Boilerplate following [Airbnb's JavaScript (ES6) Style Guide](https://github.com/airbnb/javascript).
-
 ## Features
 
-- Production ready
 - Simple `index.html` loading `vendor.bundle.js` and `htmlWebpackPlugin.files`.
 - All code following Airbnb's JavaScript (ES6) style guide with ESlint.
 - WebpackHotMiddleware with automatic reloading. Start with: `yarn start`.
