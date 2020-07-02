@@ -23,8 +23,8 @@
 Run the following commands in your terminal
 
 ```bash
-git clone git@bitbucket.org:clapping-ape/react-starter-kit.git
-cd react-starter-kit
+git clone https://github.com/arifromdon/liwani-cms.git
+cd liwani-cms
 yarn install
 yarn start
 ```
