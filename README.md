@@ -1,10 +1,5 @@
-# ClappingApe React Boilerplate
-
-ClappingApe React Boilerplate React Boilerplate following [Airbnb's JavaScript (ES6) Style Guide](https://github.com/airbnb/javascript).
-
 ## Features
 
-- Production ready
 - Simple `index.html` loading `vendor.bundle.js` and `htmlWebpackPlugin.files`.
 - All code following Airbnb's JavaScript (ES6) style guide with ESlint.
 - WebpackHotMiddleware with automatic reloading. Start with: `yarn start`.
@@ -28,8 +23,8 @@ ClappingApe React Boilerplate React Boilerplate following [Airbnb's JavaScript (
 Run the following commands in your terminal
 
 ```bash
-git clone git@bitbucket.org:clapping-ape/react-starter-kit.git
-cd react-starter-kit
+git clone https://github.com/arifromdon/liwani-cms.git
+cd liwani-cms
 yarn install
 yarn start
 ```
