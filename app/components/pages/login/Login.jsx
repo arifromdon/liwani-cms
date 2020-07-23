@@ -54,9 +54,7 @@ const Login = (props) => {
                   </Link>
                 </div>
 
-                <Link to="/dashboard">
-                  <Button disabled={isAuthenticating} type="submit">Sign in</Button>
-                </Link>
+                <Button disabled={isAuthenticating} type="submit">Sign in</Button>
               </Form>
             </Card>
           )

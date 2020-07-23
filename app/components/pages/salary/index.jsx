@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import {
   Dashboard,
   BasicTable,
@@ -14,24 +15,28 @@ import {
 } from 'components/elements'
 import { isEmpty } from 'lodash'
 import { Spinner, Form, Container, Row, Col } from 'react-bootstrap'
-import { Icon } from 'antd'
+import { Icon, Empty } from 'antd'
 import moment from 'moment'
 
-const columns = ['No', 'Nama Karyawan', 'Tanggal' , 'Jabatan', 'Upah per Hari', 'Potongan per Bulan', 'Total Potongan', 'Sisa Potongan', 'Total Absent', 'Total Upah', 'Action']
+const columns = ['No', 'Nama Karyawan', 'Jabatan', 'Upah per Hari', 'Potongan per Bulan', 'Total Potongan', 'Sisa Potongan', 'Action']
 
 const SalaryPage = ({
   onChange,
-  loading,
   handleModal,
   handleModalClose,
   modalEditSallary,
   modalEditCashReceipt,
   handleEditSalary,
   handleEditCashReceipt,
+  handlePageChange,
   handleExport,
+  dataHistoryRecap,
   form,
+  isFetching,
+  dataSalary,
+  pagination,
+  typeUser,
 }) => {
-
   const modalBodyEditSallary = (
     <Form className="form-signin p-1 form-material">
       <Container>
@@ -45,14 +50,15 @@ const SalaryPage = ({
               placeholder="Upah Perhari"
             />
           </Col>
+          <Col md={6} className="mx-auto">
+            <Button
+              type="submit"
+              onClick={(e) => handleEditSalary(e)}
+            >Submit
+            </Button>
+          </Col>
         </Row>
       </Container>
-
-      <Button
-        type="submit"
-        onClick={(e) => handleEditSalary(e)}
-      >Submit
-      </Button>
     </Form>
   )
 
@@ -63,8 +69,8 @@ const SalaryPage = ({
           <Col md={12}>
             <Input
               onChange={onChange}
-              value={form.cash_receipt || ''}
-              name="cash_receipt"
+              value={form.total_deduction || ''}
+              name="total_deduction"
               type="text"
               placeholder="Besar Kasbon"
             />
@@ -72,8 +78,8 @@ const SalaryPage = ({
           <Col md={12}>
             <Input
               onChange={onChange}
-              value={form.cash_receipt_term || ''}
-              name="cash_receipt_term"
+              value={form.term_cash_receipt || ''}
+              name="term_cash_receipt"
               type="text"
               placeholder="Jangka Kasbon"
             />
@@ -81,91 +87,83 @@ const SalaryPage = ({
           <Col md={12}>
             <Input
               onChange={onChange}
-              value={form.monthly_deductions || ''}
-              name="monthly_deductions"
+              value={form.monthly_deduction || ''}
+              name="monthly_deduction"
               type="text"
               placeholder="Potongan Kasbon per Bulan"
             />
           </Col>
-          <Col md={12}>
-            <DatePickerComponent
-              label="Pilih Tanggal Kasbon"
-              placeholder='Masukan Tanggal Kasbon'
-              onChange={onChange}
-            />
+          <Col md={6} className="mx-auto">
+            <Button
+              type="submit"
+              onClick={(e) => handleEditCashReceipt(e)}
+            >Submit
+            </Button>
           </Col>
         </Row>
       </Container>
-
-      <Button
-        type="submit"
-        onClick={(e) => handleEditCashReceipt(e)}
-      >Submit
-      </Button>
     </Form>
   )
 
 
   return (
-    <Dashboard topik="salary">
+    <Dashboard topik="salary" typeUser={typeUser}>
       <HeaderPage active="Gaji Karyawan" />
 
       <Card>
 
-        <Container fluid>
-          <Row className="align-items-center">
-            <Col md={3}>
-              <DatePickerComponent
-                label="Pilih Periode"
-                placeholder='Masukan Tanggal Periode'
-                onChange={onChange}
-              />
-            </Col>
-            <Col md={{ span: 2, offset: 7 }}>
-              <button
-                type="button"
-                className="btn btn-apply d-flex justify-content-center align-items-center"
-                onClick={(e) => handleExport(e)}
-              >
-                <Icon type="export" />
-                <small className="ml-2">Export Sallary</small>
-              </button>
-            </Col>
-          </Row>
-        </Container>
-
-        <BasicTable columns={columns}>
-          <tr key={Math.random()}>
-            <td>1</td>
-            <td>Jajang Gombres</td>
-            <td>20-06-2020</td>
-            <td>Staff</td>
-            <td>100.000</td>
-            <td>100.000</td>
-            <td>500.000</td>
-            <td>200.000</td>
-            <td>24</td>
-            <td>2.400.000</td>
-            <td className="d-flex justify-content-start align-items-center">
-              <button
-                type="button"
-                className="btn icon-button"
-                onClick={() => handleModal({ field: 'edit', id: '2' })}
-              >
-                <Icon type="edit" />
-                <small className="ml-2">Upah</small>
-              </button>
-              <button
-                type="button"
-                className="btn icon-button"
-                onClick={() => handleModal({ field: 'cash_receipt', id: '2' })}
-              >
-                <Icon type="edit" />
-                <small className="ml-2">Kasbon</small>
-              </button>
-            </td>
-          </tr>
+        {
+          isFetching ?
+          <div>
+            <Spinner animation="border" className="d-block mx-auto" />
+            <p className="text-center mt-2">Loading ...</p>
+          </div>
+          :
+          <BasicTable columns={columns}>
+          {
+            !isEmpty(dataSalary)?
+            dataSalary.map((item, index)  => (
+              <tr key={Math.random()}>
+                <td>{index + 1}</td>
+                <td><Link to={`/salary/${item.id}`}>{item.employee_name}</Link></td>
+                <td>{item.position}</td>
+                <td>{item.salary_per_day}</td>
+                <td>{item.monthly_deduction}</td>
+                <td>{item.total_deduction}</td>
+                <td>{item.remaining_deduction}</td>
+                <td className="d-flex justify-content-start align-items-center">
+                {
+                  typeUser === 'super_admin' &&
+                  (
+                    <button
+                      type="button"
+                      className="btn icon-button"
+                      onClick={() => handleModal({ field: 'edit', id: '2' })}
+                    >
+                      <Icon type="edit" />
+                      <small className="ml-2">Upah</small>
+                    </button>
+                  )
+                }
+                  <button
+                    type="button"
+                    className="btn icon-button"
+                    disabled={item.remaining_deduction !== 0 ? true : false}
+                    onClick={() => handleModal({ field: 'cash_receipt', id: '2' })}
+                  >
+                    <Icon type="edit" />
+                    <small className="ml-2">Kasbon</small>
+                  </button>
+                </td>
+              </tr>
+            )) : (
+              <tr>
+                <td colSpan="8" className="text-center py-5"><Empty /></td>
+              </tr>
+            )
+          }
         </BasicTable>
+        }
 
         <div className="d-flex justify-content-end mt-4">
           <Pagination
@@ -174,8 +172,10 @@ const SalaryPage = ({
             firstPageText={<Icon type="double-left"/>}
             lastPageText={<Icon type="double-right"/>}
             pageRangeDisplayed={5}
-            totalItemsCount={20}
-            activePage={1}
+            itemsCountPerPage={10}
+            onChange={handlePageChange}
+            totalItemsCount={isEmpty(pagination) ? 0 : (pagination.total_page * 10)}
+            activePage={isEmpty(pagination) ? 0 : pagination.current_page}
             linkClassFirst="symbol-arrow"
             linkClassPrev="symbol-arrow"
             linkClassNext="symbol-arrow"
@@ -196,43 +196,6 @@ const SalaryPage = ({
           modalHeader='Tambah Kasbon'
           modalClose={() => handleModalClose({ field: 'cash_receipt' })}
         />
-
-        {/*
-          loading ?
-          <div>
-            <Spinner animation="border" className="d-block mx-auto" />
-            <p className="text-center mt-2">Loading ...</p>
-          </div>
-          :
-          <BasicTable columns={columns}>
-          {
-            !isEmpty(subscription)?
-            subscription.map((item, index)  => (
-              <tr key={Math.random()}>
-                <td>{index + 1}</td>
-                <td>{item.email}</td>
-                <td>{moment(item.order_date).format('DD-MM-YYYY')}</td>
-                <td>{item.email}</td>
-                <td>{item.email}</td>
-                <td className="d-flex justify-content-center">
-                  <button
-                    type="button"
-                    disabled={item.active === 'true' ? true : false}
-                    className="btn btn-apply w-50"
-                    onClick={() => handleApproval(item.email)}
-                  >
-                    Aktifkan
-                  </button>
-                </td>
-              </tr>
-            )) : (
-              <tr>
-                <td colSpan="8" className="text-center py-5">No Data'</td>
-              </tr>
-            )
-          }
-        </BasicTable>
-        */}
       </Card>
     </Dashboard>
   )
@@ -242,10 +205,14 @@ SalaryPage.propTypes = {
   onChange: PropTypes.func,
   handleEditSalary: PropTypes.func,
   handleEditCashReceipt: PropTypes.func,
+  handlePageChange: PropTypes.func,
   handleExport: PropTypes.func,
-  loading: PropTypes.bool,
   modalEditSallary: PropTypes.bool,
   modalEditCashReceipt: PropTypes.bool,
+  isFetching: PropTypes.bool,
+  dataSalary: PropTypes.array,
+  pagination: PropTypes.array,
+  typeUser: PropTypes.string,
 }
 
 export default SalaryPage

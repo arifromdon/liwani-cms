@@ -10,22 +10,23 @@ const SelectComponent = ({
   name,
   error,
   onChange,
-}) => (
-  <div className="form-group">
-    <label htmlFor={name}>
-      {label}
-    </label>
+}) => {
+  return (
+    <div className="form-group">
+      <label htmlFor={name}>
+        {label}
+      </label>
 
-    <Select
-      value={value}
-      options={options}
-      name={name}
-      classNamePrefix="container-select"
-      onChange={onChange}
-    />
-    {error && <span className="error">{error}</span>}
-  </div>
-)
+      <Select
+        value={value}
+        options={options}
+        name={name}
+        className="container-select"
+        onChange={onChange}
+      />
+      {error && <span className="error">{error}</span>}
+    </div>
+)}
 
 SelectComponent.propTypes = {
   value: PropTypes.object,

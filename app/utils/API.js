@@ -6,7 +6,7 @@ import { mainPersistConfig } from 'store/configureStore'
 import { purgeStoredState } from 'redux-persist'
 
 axios.defaults.baseURL = config.api_url
-axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
+// axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
 // axios.defaults.headers['Content-Type'] = 'application/json'
 
 axios.interceptors.request.use(

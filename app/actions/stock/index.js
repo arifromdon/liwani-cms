@@ -3,6 +3,9 @@ import {
   LIST_STOCK_REQUEST,
   LIST_STOCK_SUCCESS,
   LIST_STOCK_FAILURE,
+  DETAIL_STOCK_REQUEST,
+  DETAIL_STOCK_SUCCESS,
+  DETAIL_STOCK_FAILURE,
 } from 'constants/ActionTypes'
 
 // Action get data stock
@@ -20,20 +23,54 @@ export const listStockFailure = errorMessage => ({
   errorMessage,
 })
 
-export const fetchStock = () => (
+// Action get detail data stock
+export const detailStockRequest = () => ({
+  type: DETAIL_STOCK_REQUEST,
+})
+
+export const detailStockSuccess = data => ({
+  type: DETAIL_STOCK_SUCCESS,
+  data: data,
+})
+
+export const detailStockFailure = errorMessage => ({
+  type: DETAIL_STOCK_FAILURE,
+  errorMessage,
+})
+
+
+export const fetchStock = (params) => (
   (dispatch) => {
     dispatch(listStockRequest())
-    const url = ''
+    const url = `/api/v1/stock${params}`
 
     return API.get(url)
     .then((response) => {
       if (response.data.meta.status) {
-        dispatch(listStockSuccess())
+        dispatch(listStockSuccess(response.data))
       } else {
-        dispatch(listStockFailure())
+        dispatch(listStockFailure(response.data.meta.status))
       }
     }).catch((err) => {
-      dispatch(listStockFailure()) // eslint-disable-line no-console
+      dispatch(listStockFailure(err)) // eslint-disable-line no-console
+    })
+  }
+)
+
+export const fetchDetailStock = (id) => (
+  (dispatch) => {
+    dispatch(detailStockRequest())
+    const url = `/api/v1/stock/show/${id}`
+
+    return API.get(url)
+    .then((response) => {
+      if (response.data.meta.status) {
+        dispatch(detailStockSuccess(response.data.data))
+      } else {
+        dispatch(listStockFailure(response.data.meta.message))
+      }
+    }).catch((err) => {
+      dispatch(detailStockFailure(err)) // eslint-disable-line no-console
     })
   }
 )
@@ -41,10 +78,11 @@ export const fetchStock = () => (
 export const createStock = (params) => (
   (dispatch) => {
     dispatch(listStockRequest())
-    const url = ''
+    const url = '/api/v1/stock/create'
 
     return API.post(url, params).then(
       (response) => {
+        console.log('response: ', response)
         if (response.data.meta.status) {
           dispatch(response.data.data)
         } else {
@@ -60,9 +98,9 @@ export const createStock = (params) => (
 export const updateStock = params => (
   (dispatch) => {
     dispatch(listStockRequest())
-    const url = ''
+    const url = `/api/v1/stock/update/${params.id}`
 
-    return API.put(url, params).then(
+    return API.post(url, params.data).then(
       (response) => {
         if (response.data.meta.status) {
           dispatch(response.data.data)
@@ -79,7 +117,7 @@ export const updateStock = params => (
 export const deleteStock = id => (
   (dispatch) => {
     dispatch(listStockRequest())
-    const url = ``
+    const url = `/api/v1/stock/delete/${id}`
 
     const requestDeleteStock = new Promise((resolve, reject) => {
       API.delete(url).then((response) => {
@@ -89,7 +127,7 @@ export const deleteStock = id => (
           reject(response.data.meta.message)
         }
       }).catch((err) => {
-        reject(err.message) // eslint-disable-line no-console
+        reject(err) // eslint-disable-line no-console
       })
     })
     return requestDeleteStock

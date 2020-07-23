@@ -11,7 +11,8 @@ import {
 } from 'recompose'
 import {
   fetchRecap,
-  exportRecap
+  exportRecap,
+  detailRecap,
 } from 'actions/recap'
 import RecapView from 'components/pages/recap'
 
@@ -23,11 +24,14 @@ export function mapStateToProps(state) {
     pagination,
   } = state.root.recap
 
+  const { typeUser } = state.root.auth
+
   return {
     isFetching,
     errorMessage,
     dataRecap,
     pagination,
+    typeUser,
   }
 }
 const mapDispatchToProps = dispatch => ({
@@ -40,21 +44,54 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
+  withState('exportBulk', 'setExportBulk', []),
+  withState('exportSalary', 'setExportSalary', []),
+  withState('exportStock', 'setExportStock', []),
+  withState('modalExportBulk', 'setModalExportBulk', false),
+  withState('modalExportStock', 'setModalExportStock', false),
+  withState('modalExportSalary', 'setModalExportSalary', false),
+  withState('getTarget', 'setGetTarget', ''),
   withHandlers({
-    handleExport: props => (data) => {
-      if (data.field === 'salary') {
-        props.exportRecap({ field: data.field, id: data.id })
-      } else if (data.field === 'stock') {
-        props.exportRecap({ field: data.field, id: data.id })
-      } else if (data.field === 'all') {
-        props.exportRecap({ field: data.field, id: data.id })
+    handleDetailRecap: props => (data) => {
+      props.detailRecap(data)
+    },
+    handleExport: props => (params) => {
+      const exportDate = moment(params).format("MMMM YYYY").toUpperCase()
+      const targetExport = props.getTarget
+
+      if (targetExport === 'salary') {
+        props.exportRecap({ target: targetExport, data: exportDate })
+      } else if (targetExport === 'stock') {
+        props.exportRecap({ target: targetExport, data: exportDate })
+      } else if (targetExport === 'bulk') {
+        props.exportRecap({ target: targetExport, data: exportDate })
       }
+    },
+    handleModalExport: props => (data) => {
+      if (data.field === 'bulk') {
+        props.setModalExportBulk(true)
+        props.setGetTarget('bulk')
+      } else if (data.field === 'stock') {
+        props.setModalExportStock(true)
+        props.setGetTarget('stock')
+      } else if (data.field === 'salary') {
+        props.setModalExportSalary(true)
+        props.setGetTarget('salary')
+      }
+    },
+    handleModalClose: props => (data) => {
+      if (data.field === 'bulk') {
+        props.setModalExportBulk(false)
+      } else if (data.field === 'stock') {
+        props.setModalExportStock(false)
+      } else if (data.field === 'salary') {
+        props.setModalExportSalary(false)
+      }
+    },
+  }),
+  lifecycle({
+    componentWillMount() {
+      this.props.fetchRecap()
     }
   }),
-  // lifecycle({
-  //   componentWillMount() {
-  //     this.props.fetchRecap()
-  //     this.props.setSubscription(!isEmpty(this.props.dataSubscription) && this.props.dataSubscription)
-  //   }
-  // }),
 )(RecapView)

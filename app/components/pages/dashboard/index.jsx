@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Select from 'react-select'
 import {
   Dashboard,
   BasicTable,
@@ -9,11 +10,12 @@ import {
   Button,
   Pagination,
   SelectComponent,
-  ModalItem,
+  ModalItemAntd,
   Input,
-  BarChart
+  BarChart,
+  DatePickerComponent
 } from 'components/elements'
-import { Icon } from 'antd'
+import { Icon, Empty } from 'antd'
 import { Spinner, Container, Row, Col, Form } from 'react-bootstrap'
 import { isEmpty } from 'lodash'
 
@@ -21,6 +23,7 @@ const columns = ['No', 'Nama Karyawan', 'Jabatan', 'Telepon', 'Email', 'Status',
 
 const DashboardPage = ({
   handleSelect,
+  handleSelectFilter,
   handleModal,
   handleModalClose,
   handleDeleteEmployee,
@@ -31,7 +34,26 @@ const DashboardPage = ({
   modalDelete,
   onChange,
   onSubmit,
-  form
+  form,
+  positionSelected,
+  statusSelected,
+  filterStatusSelected,
+  filterPositionSelected,
+  getPosition,
+  getStatus,
+  getId,
+  dataEmployee,
+  isFetching,
+  isFetchingCreate,
+  isFetchingUpdate,
+  pagination,
+  onChangeDate,
+  dataEmployeeCreate,
+  handlePageChange,
+  isFetchingHistory,
+  dataHistoryRecap,
+  currentUser,
+  typeUser,
 }) => {
 
   const modalBodyDelete = (
@@ -74,8 +96,8 @@ const DashboardPage = ({
           <Col md={12}>
             <Input
               onChange={onChange}
-              value={form.phonenumber || ''}
-              name="phonenumber"
+              value={form.phone_number || ''}
+              name="phone_number"
               type="text"
               placeholder="No. Telepon"
             />
@@ -90,77 +112,128 @@ const DashboardPage = ({
             />
           </Col>
           <Col md={12}>
-            <SelectComponent
-              label='Pilih Jabatan'
-              name='position'
-              onChange={e => handleSelect({ value: e, field: 'subDistrict' })}
+            <Input
+              onChange={onChange}
+              value={form.salary_per_day || ''}
+              name="salary_per_day"
+              type="text"
+              placeholder="Upah Harian"
             />
           </Col>
           <Col md={12}>
-            <SelectComponent
-              label='Pilih Status'
-              name='status'
-              onChange={e => handleSelect({ value: e, field: 'subDistrict' })}
+            <DatePickerComponent
+              label="Pilih Periode"
+              placeholder='Masukan Tanggal Periode'
+              onChange={onChangeDate}
             />
+          </Col>
+          <Col md={12} className="mb-3">
+            <label htmlFor='position'>Pilih Jabatan</label>
+            <Select
+              name='position'
+              value={positionSelected}
+              options={getPosition}
+              onChange={e => handleSelect({ value: e, field: 'position' })}
+            />
+          </Col>
+          <Col md={12} className="mb-3">
+            <label htmlFor='status'>Pilih Status</label>
+            <Select
+              name='status'
+              value={statusSelected}
+              options={getStatus}
+              onChange={e => handleSelect({ value: e, field: 'status' })}
+            />
+          </Col>
+          <Col md={6} className="mx-auto">
+            <Button
+              onClick={(e) => handleCreateEmployee(e)}
+              type="submit"
+            >{isFetchingCreate ? 'Loading ...' : 'Submit'}
+            </Button>
           </Col>
         </Row>
       </Container>
-
-      <Button
-        onClick={(e) => handleCreateEmployee(e)}
-        type="submit"
-      >Submit
-      </Button>
     </Form>
   )
 
   const modalBodyEdit = (
     <Form className="form-signin p-1 form-material">
-      <Input
-        onChange={onChange}
-        value={form.employee_name || ''}
-        name="employee_name"
-        type="text"
-        placeholder="Nama Karyawan"
-      />
-      <Input
-        onChange={onChange}
-        value={form.phonenumber || ''}
-        name="phonenumber"
-        type="text"
-        placeholder="No. Telepon"
-      />
-      <Input
-        onChange={onChange}
-        value={form.email || ''}
-        name="email"
-        type="email"
-        placeholder="Email Karyawan"
-      />
-      <SelectComponent
-        label='Pilih Jabatan'
-        name='position'
-        onChange={e => handleSelect({ value: e, field: 'subDistrict' })}
-      />
-      <SelectComponent
-        label='Pilih Status'
-        name='status'
-        onChange={e => handleSelect({ value: e, field: 'subDistrict' })}
-      />
-
-      <Button
-        type="submit"
-        onClick={(e) => handleEditEmployee(e)}
-      >Submit
-      </Button>
+      <Container>
+        <Row>
+          <Col md={12}>
+            <Input
+              onChange={onChange}
+              value={form.employee_name || ''}
+              name="employee_name"
+              type="text"
+              placeholder="Nama Karyawan"
+            />
+          </Col>
+          <Col md={12}>
+            <Input
+              onChange={onChange}
+              value={form.phone_number || ''}
+              name="phone_number"
+              type="text"
+              placeholder="No. Telepon"
+            />
+          </Col>
+          <Col md={12}>
+            <Input
+              onChange={onChange}
+              value={form.email || ''}
+              name="email"
+              type="email"
+              placeholder="Email Karyawan"
+            />
+          </Col>
+          <Col md={12}>
+            <DatePickerComponent
+              label="Pilih Periode"
+              placeholder='Masukan Tanggal Periode'
+              onChange={onChangeDate}
+            />
+          </Col>
+          <Col md={12} className="mb-3">
+            <label htmlFor='position'>Pilih Jabatan</label>
+            <Select
+              name='position'
+              value={positionSelected || ''}
+              options={getPosition}
+              onChange={e => handleSelect({ value: e, field: 'position' })}
+            />
+          </Col>
+          <Col md={12} className="mb-3">
+            <label htmlFor='status'>Pilih Status</label>
+            <Select
+              name='status'
+              value={statusSelected || ''}
+              options={getStatus}
+              onChange={e => handleSelect({ value: e, field: 'status' })}
+            />
+          </Col>
+          <Col md={6} className="mx-auto">
+            <Button
+              type="submit"
+              onClick={(e) => handleEditEmployee(e)}
+            >{isFetchingUpdate ? 'Loading ...' : 'Submit'}
+            </Button>
+          </Col>
+        </Row>
+      </Container>
     </Form>
   )
 
   return(
-    <Dashboard topik="dashboard">
-      <HeaderPage active="Dashboard"/>
-
-      <BarChart/>
+    <Dashboard topik="dashboard" typeUser={typeUser}>
+      {
+        typeUser === "super_admin" &&
+        <React.Fragment>
+          <HeaderPage active="Dashboard"/>
+          <BarChart dataHistory={dataHistoryRecap} fetching={isFetchingHistory} />
+        </React.Fragment>
+      }
 
       <HeaderPage active="List Karyawan"/>
 
@@ -171,12 +244,18 @@ const DashboardPage = ({
               <SelectComponent
                 label='Pilih Tipe Jabatan'
                 name='Position Tipe'
+                value={filterPositionSelected}
+                options={getPosition}
+                onChange={e => handleSelectFilter({ value: e, field: 'filter-position' })}
               />
             </Col>
             <Col md={3}>
               <SelectComponent
                 label='Pilih Tipe Status'
                 name='Status Tipe'
+                value={filterStatusSelected}
+                options={getStatus}
+                onChange={e => handleSelectFilter({ value: e, field: 'filter-status' })}
               />
             </Col>
             <Col md={{ span: 2, offset: 4 }}>
@@ -192,32 +271,51 @@ const DashboardPage = ({
           </Row>
         </Container>
 
-        <BasicTable columns={columns}>
-          <tr key={Math.random()}>
-            <td>1</td>
-            <td>Juju Julaeha</td>
-            <td>Admin</td>
-            <td>08192893928</td>
-            <td>juju@julaeha.com</td>
-            <td>Staff</td>
-            <td>
-              <button
-                type="button"
-                className="btn icon-button"
-                onClick={() => handleModal({ field: 'edit', id: '2' })}
-              >
-                <Icon type="edit" />
-              </button>
-              <button
-                type="button"
-                className="btn icon-button"
-                onClick={() => handleModal({ field: 'delete', id: '2' })}
-              >
-                <Icon type="delete" />
-              </button>
-            </td>
-          </tr>
+        {
+          isFetching ? 
+          <div>
+            <Spinner animation="border" className="d-block mx-auto" />
+            <p className="text-center mt-2">Loading ...</p>
+          </div>
+          :
+          <BasicTable columns={columns}>
+          {
+            !isEmpty(dataEmployee) ?
+            dataEmployee.map((item, index) => {
+              return (
+                <tr key={Math.random()}>
+                  <td>{index + 1}</td>
+                  <td>{item.employee_name}</td>
+                  <td>{item.position}</td>
+                  <td>{item.phone_number}</td>
+                  <td>{item.email}</td>
+                  <td>{item.status}</td>
+                  <td>
+                    <button
+                      type="button"
+                      className="btn icon-button"
+                      onClick={() => handleModal({ field: 'edit', data: item })}
+                    >
+                      <Icon type="edit" />
+                    </button>
+                    <button
+                      type="button"
+                      className="btn icon-button"
+                      onClick={() => handleModal({ field: 'delete', id: item.id })}
+                    >
+                      <Icon type="delete" />
+                    </button>
+                  </td>
+                </tr>
+              )
+            }) : (
+              <tr>
+                <td colSpan="7" className="text-center py-5"><Empty /></td>
+              </tr>
+            )
+          }
         </BasicTable>
+        }
 
         <div className="d-flex justify-content-end mt-4">
           <Pagination
@@ -226,8 +324,10 @@ const DashboardPage = ({
             firstPageText={<Icon type="double-left"/>}
             lastPageText={<Icon type="double-right"/>}
             pageRangeDisplayed={5}
-            totalItemsCount={20}
-            activePage={1}
+            itemsCountPerPage={10}
+            onChange={handlePageChange}
+            totalItemsCount={isEmpty(pagination) ? 0 : (pagination.total_page * 10)}
+            activePage={isEmpty(pagination) ? 0 : pagination.current_page}
             linkClassFirst="symbol-arrow"
             linkClassPrev="symbol-arrow"
             linkClassNext="symbol-arrow"
@@ -235,63 +335,32 @@ const DashboardPage = ({
           />
         </div>
 
-        <ModalItem
+        <ModalItemAntd
           show={modalCreate}
           modalBody={modalBodyCreate}
           modalHeader='Tambah Karyawan'
-          modalClose={() => handleModalClose({ field: 'create' })}
+          onCancel={() => handleModalClose({ field: 'create' })}
+          cancelButtonProps={{ style: { display: 'none' } }}
+          okButtonProps={{ style: { display: 'none' } }}
         />
 
-        <ModalItem
+        <ModalItemAntd
           show={modalEdit}
           modalBody={modalBodyEdit}
           modalHeader='Edit Karyawan'
-          modalClose={() => handleModalClose({ field: 'edit' })}
+          onCancel={() => handleModalClose({ field: 'edit' })}
+          cancelButtonProps={{ style: { display: 'none' } }}
+          okButtonProps={{ style: { display: 'none' } }}
         />
 
-        <ModalItem
+        <ModalItemAntd
           show={modalDelete}
           modalBody={modalBodyDelete}
           modalHeader='Delete Karyawan'
-          modalClose={() => handleModalClose({ field: 'delete' })}
+          onCancel={() => handleModalClose({ field: 'delete' })}
+          cancelButtonProps={{ style: { display: 'none' } }}
+          okButtonProps={{ style: { display: 'none' } }}
         />
-
-        {/*
-          loadingExport || loadingPrice || loadingImport ? 
-          <div>
-            <Spinner animation="border" className="d-block mx-auto" />
-            <p className="text-center mt-2">Loading ...</p>
-          </div>
-          :
-          <BasicTable columns={columns}>
-          {
-            !isEmpty(listData) ?
-            listData.map((item, index) => {
-              return (
-                <tr key={Math.random()}>
-                  <td>{index + 1}</td>
-                  <td>{item.price1}</td>
-                  <td>{item.price2}</td>
-                  <td>{item.price3}</td>
-                  <td>
-                    <button
-                      type="button"
-                      className="icon-button"
-                      onClick={() => handleModalEdit(item.id)}
-                    >
-                      <Icon type="edit" />
-                    </button>
-                  </td>
-                </tr>
-              )
-            }) : (
-              <tr>
-                <td colSpan="4" className="text-center py-5">No Data</td>
-              </tr>
-            )
-          }
-        </BasicTable>
-        */}
       </Card>
 
     </Dashboard>
@@ -300,17 +369,35 @@ const DashboardPage = ({
 
 DashboardPage.propTypes = {
   handleSelect: PropTypes.func,
+  handleSelectFilter: PropTypes.func,
   handleDeleteEmployee: PropTypes.func,
+  handlePageChange: PropTypes.func,
   onChange: PropTypes.func,
   onSubmit: PropTypes.func,
   handleModal: PropTypes.func,
   handleModalClose: PropTypes.func,
   handleCreateEmployee: PropTypes.func,
   handleEditEmployee: PropTypes.func,
-  form: PropTypes.func,
+  onChangeDate: PropTypes.func,
+  form: PropTypes.object,
   modalCreate: PropTypes.bool,
   modalEdit: PropTypes.bool,
   modalDelete: PropTypes.bool,
+  isFetching: PropTypes.bool,
+  isFetchingCreate: PropTypes.bool,
+  isFetchingUpdate: PropTypes.bool,
+  positionSelected: PropTypes.object,
+  statusSelected: PropTypes.object,
+  filterStatusSelected: PropTypes.object,
+  filterPositionSelected: PropTypes.object,
+  getId: PropTypes.object,
+  pagination: PropTypes.object,
+  getPosition: PropTypes.array,
+  getStatus: PropTypes.array,
+  dataEmployee: PropTypes.array,
+  isFetchingHistory: PropTypes.bool,
+  dataHistoryRecap: PropTypes.array,
+  // typeUser: PropTypes.string,
 }
 
 export default DashboardPage

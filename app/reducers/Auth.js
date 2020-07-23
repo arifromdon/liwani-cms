@@ -3,6 +3,7 @@ import {
   AUTHENTICATE_USER_SUCCESS,
   AUTHENTICATE_USER_FAILURE,
   UPDATE_AUTH_CURRENT_USER,
+  STATUS_CURRENT_USER,
 } from 'constants/ActionTypes'
 
 const initialState = {
@@ -22,6 +23,12 @@ export default function auth(state = initialState, action) {
         isAuthenticating: false,
         currentUser: action.currentUser,
       }
+    case STATUS_CURRENT_USER:
+      return {
+        ...state,
+        isAuthenticating: false,
+        typeUser: action.typeUser.status,
+      }
     case AUTHENTICATE_USER_FAILURE:
       return {
         ...state,
@@ -31,7 +38,8 @@ export default function auth(state = initialState, action) {
     case UPDATE_AUTH_CURRENT_USER:
       return {
         ...state,
-        currentUser: action.currentUser,
+        currentUser: action.currentUser.token,
+        // typeUser: action.user.status,
       }
     default:
       return state

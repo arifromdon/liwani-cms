@@ -12,6 +12,7 @@ import {
   AUTHENTICATE_USER_SUCCESS,
   AUTHENTICATE_USER_FAILURE,
   UPDATE_AUTH_CURRENT_USER,
+  STATUS_CURRENT_USER,
 } from 'constants/ActionTypes'
 
 export const authenticateUserRequest = () => ({
@@ -21,6 +22,11 @@ export const authenticateUserRequest = () => ({
 export const authenticateUserSuccess = data => ({
   type: AUTHENTICATE_USER_SUCCESS,
   currentUser: data,
+})
+
+export const statusUserSuccess = data => ({
+  type: STATUS_CURRENT_USER,
+  typeUser: data,
 })
 
 export const authenticateUserFailure = errorMessage => ({
@@ -47,9 +53,10 @@ export const getAccessToken = () => (
 
 export const loginUser = data => (
   (dispatch) => {
-    dispatch(authenticateUserSuccess(data))
+    dispatch(authenticateUserSuccess(data.token))
+    dispatch(statusUserSuccess(data.user))
 
-    Cookies.set(config.auth_cookie_name, data.auth_token, {
+    Cookies.set(config.auth_cookie_name, data.token, {
       path: '/',
       domain: Browser.getRootDomain(),
     })
@@ -61,12 +68,12 @@ export const loginUser = data => (
 export const authenticateByCredentials = (params) => (
   (dispatch) => {
     dispatch(authenticateUserRequest())
-    const url = '/admin/login'
+    const url = '/api/v1/auth/token/request'
 
     return API.post(url, params).then(
       (response) => {
         if (response.data.meta.status) {
-          dispatch(loginUser(response.data.data))
+          dispatch(loginUser(response.data.data.user))
         } else {
           dispatch(updateAuthCurrentUser(null))
           dispatch(authenticateUserFailure(response.data.message))

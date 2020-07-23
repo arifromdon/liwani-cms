@@ -22,7 +22,7 @@ export default function absent(state = initialState, action) {
         ...state,
         isFetching: false,
         errorMessage: null,
-        dataAbsent: action.data.results,
+        dataAbsent: action.data.data,
         pagination: action.data.pagination,
       }
     case LIST_ABSENT_FAILURE:

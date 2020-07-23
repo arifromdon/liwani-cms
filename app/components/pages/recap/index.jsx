@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import ReactExport from 'react-export-excel';
+import { Link } from 'react-router-dom'
 import {
   Dashboard,
   BasicTable,
@@ -9,136 +11,150 @@ import {
   Button,
   Pagination,
   DatePickerComponent,
+  ModalItemAntd,
 } from 'components/elements'
 import { isEmpty } from 'lodash'
 import { Spinner, Container, Row, Col } from 'react-bootstrap'
 import { Icon } from 'antd'
 import moment from 'moment'
+import logoStock from 'assets/images/data-warehouse.png'
+import logoSalary from 'assets/images/salary.png'
 
-const columns = ['No', 'Nama Pengeluaran', 'Tanggal' , 'Total Pengeluaran', 'Action']
+const columns = ['No', 'Nama Pengeluaran', 'Periode' , 'Total Pengeluaran', 'Action']
+
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 const RecapPage = ({
   handleExport,
+  handleModalClose,
   isFetching,
   dataRecap,
   pagination,
-}) => (
-  <Dashboard topik="recap">
-    <HeaderPage
-      active="Rekap"
-    >
-      Rekap
-    </HeaderPage>
-    <Card>
+  modalExportBulk,
+  modalExportStock,
+  modalExportSalary,
+  handleModalExport,
+  typeUser,
+}) => {
 
-      <Container fluid>
-        <Row className="align-items-center">
-          <Col md={3}>
-            <DatePickerComponent
-              label="Pilih Periode"
-              placeholder='Masukan Tanggal Periode'
-            />
+  const modalExportForm = (
+    <Container>
+      <Row>
+        <Col md={12}>
+          <DatePickerComponent
+            onChange={handleExport}
+            label="Pilih Bulan Periode"
+          />
+        </Col>
+        <Col md={4} className="ml-auto">
+          <ExcelFile
+            element={
+              <button
+                type="button"
+                className="btn btn-apply d-flex justify-content-center align-items-center"
+              >
+                <small className="ml-2">Export Semua</small>
+              </button>
+            }
+          >
+            <ExcelSheet data name="Employees">
+              <ExcelColumn label="Name" value="name"/>
+              <ExcelColumn label="Wallet Money" value="amount"/>
+              <ExcelColumn label="Gender" value="sex"/>
+              <ExcelColumn label="Marital Status"
+                             value={(col) => col.is_married ? "Married" : "Single"}/>
+            </ExcelSheet>
+            <ExcelSheet data name="Leaves">
+              <ExcelColumn label="Name" value="name"/>
+              <ExcelColumn label="Total Leaves" value="total"/>
+              <ExcelColumn label="Remaining Leaves" value="remaining"/>
+            </ExcelSheet>
+          </ExcelFile>
+        </Col>
+      </Row>
+    </Container>
+  )
+
+  return (
+    <Dashboard topik="recap" typeUser={typeUser}>
+      <HeaderPage active="Rekap">Rekap</HeaderPage>
+
+      <Container className="mt-5">
+        <Row className="justify-content-between">
+          <Col md={5} xs={12}>
+            <Link to="/recap/show_sallary">
+              <Card>
+                <div className="d-flex justify-content-end align-items-center mb-3">
+                  <p className="mr-2 mb-0 text-dark">Detail Gaji</p>
+                  <Icon type="arrow-right" className="text-dark"/>
+                </div>
+                <img src={logoSalary} className="w-50 d-block mx-auto mb-5"/>
+                <div>
+                  <p className="text-dark">Menampilkan kumpulan hasil dari gaji PT Liwani Kencana Indonesia</p>
+                </div>
+              </Card>
+            </Link>
           </Col>
-          <Col md={{ span: 2, offset: 7 }}>
-            <button
-              type="button"
-              className="btn btn-apply d-flex justify-content-center align-items-center"
-              onClick={() => handleExport()}
-            >
-              <Icon type="export" />
-              <small className="ml-2">Export Semua</small>
-            </button>
+          <Col md={5} xs={12}>
+            <Link to="/recap/show_stock">
+              <Card>
+                <div className="d-flex justify-content-end align-items-center mb-3">
+                  <p className="mr-2 mb-0 text-dark">Detail Stok</p>
+                  <Icon type="arrow-right" className="text-dark"/>
+                </div>
+                <img src={logoStock} className="w-50 d-block mx-auto mb-5"/>
+                <div>
+                  <p className="text-dark">Menampilkan kumpulan hasil dari stok PT Liwani Kencana Indonesia</p>
+                </div>
+              </Card>
+            </Link>
           </Col>
         </Row>
       </Container>
 
-      <BasicTable columns={columns}>
-        <tr key={Math.random()}>
-          <td>1</td>
-          <td>Gaji</td>
-          <td>28-06-2020</td>
-          <td>Rp. 20.000.000</td>
-          <td className="d-flex justify-content-center w-50">
-            <button
-              type="button"
-              className="btn btn-apply d-flex justify-content-center align-items-center"
-              onClick={() => handleExport({ field: 'salary', id: '2' })}
-            >
-              <Icon type="export" />
-              <small className="ml-2">Export Gaji</small>
-            </button>
-          </td>
-        </tr>
-        <tr key={Math.random()}>
-          <td>2</td>
-          <td>Stok</td>
-          <td>28-06-2020</td>
-          <td>Rp. 30.000.000</td>
-          <td className="d-flex justify-content-center w-50">
-            <button
-              type="button"
-              className="btn btn-apply d-flex justify-content-center align-items-center"
-              onClick={() => handleExport({ field: 'stock', id: '2' })}
-            >
-              <Icon type="export" />
-              <small className="ml-2">Export Stok</small>
-            </button>
-          </td>
-        </tr>
-        <tr key={Math.random()}>
-          <td colSpan="3"><span className="font-weight-bold">TOTAL</span></td>
-          <td colSpan="2"><span className="font-weight-bold">Rp. 50.000.000</span></td>
-        </tr>
-      </BasicTable>
+      <ModalItemAntd
+        show={modalExportBulk}
+        modalBody={modalExportForm}
+        onCancel={() => handleModalClose({ field: 'bulk' })}
+        modalHeader='Export Semua'
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+      />
 
-      {/*
-        loading ?
-        <div>
-          <Spinner animation="border" className="d-block mx-auto" />
-          <p className="text-center mt-2">Loading ...</p>
-        </div>
-        :
-        <BasicTable columns={columns}>
-        {
-          !isEmpty(subscription)?
-          subscription.map((item, index)  => (
-            <tr key={Math.random()}>
-              <td>{index + 1}</td>
-              <td>{item.email}</td>
-              <td>{moment(item.order_date).format('DD-MM-YYYY')}</td>
-              <td>
-                <span className={`badge badge-${item.active === 'true' ? 'secondary' : 'primary'}`}>
-                  {item.active === 'true' ? 'Aktif' : 'Non Aktif'}
-                </span>
-              </td>
-              <td className="d-flex justify-content-center">
-                <button
-                  type="button"
-                  disabled={item.active === 'true' ? true : false}
-                  className="btn btn-apply w-50"
-                  onClick={() => handleApproval(item.email)}
-                >
-                  Aktifkan
-                </button>
-              </td>
-            </tr>
-          )) : (
-            <tr>
-              <td colSpan="7" className="text-center py-5">No Data'</td>
-            </tr>
-          )
-        }
-      </BasicTable>
-      */}
-    </Card>
-  </Dashboard>
-)
+      <ModalItemAntd
+        show={modalExportStock}
+        modalBody={modalExportForm}
+        modalHeader='Export Stok'
+        onCancel={() => handleModalClose({ field: 'stock' })}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+      />
+
+      <ModalItemAntd
+        show={modalExportSalary}
+        modalBody={modalExportForm}
+        modalHeader='Export Gaji'
+        onCancel={() => handleModalClose({ field: 'salary' })}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        okButtonProps={{ style: { display: 'none' } }}
+      />
+
+    </Dashboard>
+  )
+}
 
 RecapPage.propTypes = {
   handleExport: PropTypes.func,
+  handleModalClose: PropTypes.func,
   isFetching: PropTypes.bool,
   dataRecap: PropTypes.array,
   pagination: PropTypes.any,
+  modalExportBulk: PropTypes.bool,
+  modalExportStock: PropTypes.bool,
+  modalExportSalary: PropTypes.bool,
+  typeUser: PropTypes.string,
 }
 
 export default RecapPage

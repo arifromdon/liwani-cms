@@ -14,6 +14,7 @@ import CardTitle from './Card/CardTitle'
 import DatePickerComponent from './Form/DatePicker'
 import Pagination from './Pagination'
 import ModalItem from './Modal'
+import ModalItemAntd from './Modal/modalAntd'
 import BarChart from './Chart'
 
 export {
@@ -33,5 +34,6 @@ export {
   DatePickerComponent,
   Pagination,
   ModalItem,
-  BarChart
+  BarChart,
+  ModalItemAntd
 }

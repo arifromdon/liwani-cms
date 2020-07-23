@@ -1,62 +1,59 @@
 import PropTypes from 'prop-types'
+import { isEmpty } from 'lodash'
+import { Spinner, Container, Row, Col, Form, Alert } from 'react-bootstrap'
 import {
-  Card, Input, Button, Checkbox,
+  Card, Input, Button,
 } from 'components/elements'
-import { Form, Alert } from 'react-bootstrap'
+import logo from 'assets/images/logo_liwani.png'
 
-const ForgotPassword = (props) => {
-  const {
-    onChange,
-    onSubmit,
-    form,
-    errorMessageForgot,
-    loadingForgot,
-  } = props
 
-  return (
+const ForgotPassword = ({
+  onSubmit,
+  errorMessage,
+  onChange,
+  form,
+  isFetchingForgot,
+  errorMessageForgot,
+}) => {
+  return(
     <div className="form-container">
-      <div className="form-box">
-        <Card>
-          <h3 className="box-title m-b-20">Forgot Password</h3>
-          <Form className="form-signin p-1 form-material" onSubmit={onSubmit}>
-            <Input
-              onChange={onChange}
-              value={form.email || ''}
-              name="email"
-              type="email"
-              placeholder="Masukan Email"
-            />
-            <Input
-              onChange={onChange}
-              value={form.password || ''}
-              name="password"
-              type="password"
-              placeholder="Masukan Password Baru"
-            />
-            <Input
-              onChange={onChange}
-              value={form.password_confirmation || ''}
-              name="password_confirmation"
-              type="password"
-              placeholder="Ulangi Password Baru"
-            />
+      <Container style={{ height: '100%', minHeight: '100vh' }}>
+        <Row className="m-auto h-100">
+          <Col md={6} className="m-auto">
+            <img src={logo} className="d-block mx-auto mb-4" style={{ width: '30%' }}/>
+            <Card>
+              <h3 className="box-title m-b-20 text-center">Forgot Password</h3>
+              <Form className="form-signin p-1 form-material" onSubmit={onSubmit}>
+                <label className="mb-3">Masukan email anda</label>
+                <Input
+                  onChange={onChange}
+                  value={form.email || ''}
+                  name="email"
+                  type="email"
+                  placeholder="Email Address"
+                />
 
-            {errorMessageForgot && <Alert variant="danger">{errorMessageForgot}</Alert>}
+                {errorMessageForgot && <Alert variant="info">{errorMessageForgot}</Alert>}
 
-            <Button disabled={loadingForgot} type="submit">Submit</Button>
-          </Form>
-        </Card>
-      </div>
+                <Button
+                  disabled={isEmpty(form.email) ? true : false}
+                  type="submit"
+                >{isFetchingForgot ? "Loading ..." : "Submit"}</Button>
+              </Form>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </div>
   )
 }
 
 ForgotPassword.propTypes = {
-  onChange: PropTypes.func,
   onSubmit: PropTypes.func,
-  form: PropTypes.any,
+  onChange: PropTypes.func,
+  errorMessage: PropTypes.string,
   errorMessageForgot: PropTypes.string,
-  loadingForgot: PropTypes.bool,
+  isFetchingForgot: PropTypes.bool,
 }
 
 export default ForgotPassword

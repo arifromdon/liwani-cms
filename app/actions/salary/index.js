@@ -6,6 +6,9 @@ import {
   EXPORT_SALARY_REQUEST,
   EXPORT_SALARY_SUCCESS,
   EXPORT_SALARY_FAILURE,
+  DETAIL_SALARY_REQUEST,
+  DETAIL_SALARY_SUCCESS,
+  DETAIL_SALARY_FAILURE,
 } from 'constants/ActionTypes'
 
 // Action get data salary
@@ -38,20 +41,53 @@ export const exportSalaryFailure = errorMessage => ({
   errorMessage,
 })
 
-export const fetchSalary = () => (
+// Action get detail salary
+export const detailSalaryRequest = () => ({
+  type: DETAIL_SALARY_REQUEST,
+})
+
+export const detailSalarySuccess = data => ({
+  type: DETAIL_SALARY_SUCCESS,
+  data: data,
+})
+
+export const detailSalaryFailure = errorMessage => ({
+  type: DETAIL_SALARY_FAILURE,
+  errorMessage,
+})
+
+export const fetchSalary = (params) => (
   (dispatch) => {
     dispatch(listSalaryRequest())
-    const url = ''
+    const url = `/api/v1/salary${params}`
 
     return API.get(url)
     .then((response) => {
       if (response.data.meta.status) {
-        dispatch(listSalarySuccess())
+        dispatch(listSalarySuccess(response.data))
       } else {
-        dispatch(listSalaryFailure())
+        dispatch(listSalaryFailure(response.data.meta.message))
       }
     }).catch((err) => {
-      dispatch(listSalaryFailure()) // eslint-disable-line no-console
+      dispatch(listSalaryFailure(err)) // eslint-disable-line no-console
+    })
+  }
+)
+
+export const fetchDetailSalary = (params) => (
+  (dispatch) => {
+    dispatch(detailSalaryRequest())
+    const url = `/api/v1/salary/show/${params}`
+
+    return API.get(url)
+    .then((response) => {
+      if (response.data.meta.status) {
+        dispatch(detailSalarySuccess(response.data.data))
+      } else {
+        dispatch(detailSalaryFailure(response.data.meta.message))
+      }
+    }).catch((err) => {
+      dispatch(detailSalaryFailure(err)) // eslint-disable-line no-console
     })
   }
 )
@@ -77,9 +113,9 @@ export const exportSalary = (id) => (
 export const editSalary = params => (
   (dispatch) => {
     dispatch(listSalaryRequest())
-    const url = ''
+    const url = `/api/v1/salary/update/${params.id}`
 
-    return API.put(url, params).then(
+    return API.post(url, params.data).then(
       (response) => {
         if (response.data.meta.status) {
           dispatch(response.data.data)
@@ -96,9 +132,9 @@ export const editSalary = params => (
 export const updateCashReceipt = params => (
   (dispatch) => {
     dispatch(listSalaryRequest())
-    const url = ''
+    const url = `/api/v1/salary/update/cash_receipt/${params.id}`
 
-    return API.put(url, params).then(
+    return API.post(url, params.data).then(
       (response) => {
         if (response.data.meta.status) {
           dispatch(response.data.data)

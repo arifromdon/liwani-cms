@@ -18,7 +18,9 @@ class Dashboard extends Component {
     const {
       children,
       topik,
+      typeUser,
     } = this.props
+
     return (
       <Layout>
         <Sider
@@ -65,11 +67,14 @@ class Dashboard extends Component {
                   <span className="nav-text">Gaji</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key="recap">
-                <Link to="/recap">
-                  <span className="nav-text">Rekap</span>
-                </Link>
-              </Menu.Item>
+              {
+                typeUser === "super_admin" &&
+                <Menu.Item key="recap">
+                  <Link to="/recap">
+                    <span className="nav-text">Rekap</span>
+                  </Link>
+                </Menu.Item>
+              }
             </Menu>
             <button
               type="button"
@@ -97,6 +102,7 @@ Dashboard.propTypes = {
   children: PropTypes.any,
   topik: PropTypes.string,
   logout: PropTypes.func,
+  // typeUser: PropTypes.string,
 }
 
 const mapDispatchToProps = dispatch => ({

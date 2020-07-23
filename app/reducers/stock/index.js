@@ -22,8 +22,8 @@ export default function stock(state = initialState, action) {
         ...state,
         isFetching: false,
         errorMessage: null,
-        dataStock: action.data.results,
-        pagination: action.data.pagination,
+        dataStock: action.data.data.data,
+        pagination: action.data.data.pagination,
       }
     case LIST_STOCK_FAILURE:
       return {

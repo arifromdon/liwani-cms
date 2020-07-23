@@ -22,7 +22,7 @@ export default function salary(state = initialState, action) {
         ...state,
         isFetching: false,
         errorMessage: null,
-        dataSalary: action.data.results,
+        dataSalary: action.data.data,
         pagination: action.data.pagination,
       }
     case LIST_SALARY_FAILURE:

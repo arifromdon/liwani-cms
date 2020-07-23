@@ -26,4 +26,6 @@ module.exports = {
       jQuery: "jquery"
     })
   ],
+  node: { fs: 'empty' },
+  externals: [{ './cptable': 'var cptable' }],
 }

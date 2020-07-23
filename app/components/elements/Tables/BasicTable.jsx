@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import shortid from 'shortid'
 
-const BasicTable = ({ columns, children }) => (
+const BasicTable = ({ columns, children, idTable }) => (
   <div className="table-responsive">
-    <table className="table table-striped table-bordered">
+    <table className="table table-striped table-bordered" id={idTable}>
       <thead>
         <tr>
           {
@@ -23,6 +23,7 @@ const BasicTable = ({ columns, children }) => (
 BasicTable.propTypes = {
   columns: PropTypes.any,
   children: PropTypes.any,
+  idTable: PropTypes.string,
 }
 
 export default BasicTable

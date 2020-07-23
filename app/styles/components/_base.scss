@@ -162,3 +162,17 @@ body {
     }
   }
 }
+
+.table-export {
+  tr {
+    th {
+      padding: 0;
+      padding-bottom: 10px;
+      border-top: 0px;
+    }
+    td {
+      padding: 0;
+      border-top: 0px;
+    }
+  }
+}

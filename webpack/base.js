@@ -7,10 +7,10 @@ const Dotenv = require('dotenv-webpack')
 const env = require('dotenv').config()
 
 var appConfig = {
-  project_name: env.parsed.PROJECT_NAME || 'pinsar',
+  project_name: env.parsed.PROJECT_NAME || 'Liwani',
   node_env: env.parsed.NODE_ENV || 'development',
-  auth_cookie_name: env.parsed.AUTH_COOKIE_NAME || 'ca_auth_token',
-  api_url: env.parsed.API_URL || 'https://pinsar-api.ptape.com'
+  auth_cookie_name: env.parsed.AUTH_COOKIE_NAME || 'auth_token',
+  api_url: env.parsed.API_URL || 'https://cryptic-wave-35536.herokuapp.com/'
 }
 
 var postcssLoaderOptions = {
@@ -93,7 +93,7 @@ var config = {
       path.join(__dirname, '..'),
       'node_modules'
     ],
-    extensions: ['.jsx', '.js']
+    extensions: ['.jsx', '.js'],
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -109,7 +109,7 @@ var config = {
       { from: 'app/assets/fonts', to: 'assets/fonts' }
     ])
   ],
-  devtool: process.env.DEVTOOL || 'cheap-module-eval-source-map'
+  devtool: process.env.DEVTOOL || 'cheap-module-eval-source-map',
 }
 
 module.exports = config

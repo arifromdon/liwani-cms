@@ -12,10 +12,15 @@ import Login from 'containers/login/Login'
 import NotFound from 'containers/NotFound'
 import Dashboard from 'containers/dashboard'
 import Stock from 'containers/stock'
+import DetailStock from 'containers/stock/detail'
 import Recap from 'containers/recap'
+import DetailRecap from 'containers/recap/detail'
 import Absent from 'containers/absent'
 import Salary from 'containers/salary'
+import DetailSalary from 'containers/salary/detail'
+import ExportSalary from 'containers/salary/export'
 import Forgot from 'containers/forgot'
+import CheckToken from 'containers/forgot/ResetPassword'
 
 const PublicRoute = (props) => {
   const {
@@ -62,11 +67,16 @@ const Root = ({ store, persistor }) => (
         <Switch>
           <PublicRoute redirect exact path="/" component={Login} />
           <PublicRoute exact path="/forgot-password" component={Forgot} />
+          <PublicRoute exact path="/forgot" component={CheckToken} />
           <PublicRoute exact path="/dashboard" component={Dashboard} />
           <PublicRoute exact path="/stock" component={Stock} />
+          <PublicRoute exact path="/stock/:id" component={DetailStock} />
           <PublicRoute exact path="/recap" component={Recap} />
+          <PublicRoute exact path="/recap/:id" component={DetailRecap} />
           <PublicRoute exact path="/absent" component={Absent} />
           <PublicRoute exact path="/salary" component={Salary} />
+          <PublicRoute exact path="/salary/:id" component={DetailSalary} />
+          <PublicRoute exact path="/export/salary" component={ExportSalary} />
           <PublicRoute component={NotFound} />
         </Switch>
       </Router>
