@@ -14,36 +14,37 @@ import {
   Input
 } from 'components/elements'
 import { Link } from 'react-router-dom'
-import { isEmpty } from 'lodash'
-import { Spinner, Container, Row, Col, Form } from 'react-bootstrap'
+import { isEmpty, startCase, toLower } from 'lodash'
+import { Spinner, Container, Row, Col, Form, Badge } from 'react-bootstrap'
 import { Icon, Empty } from 'antd'
 import moment from 'moment'
 
-const columns = ['No', 'Nama Pakan', 'Stok Saat Ini', 'Stok Masuk', 'Stok Keluar', 'Sisa Stok', 'Total Stok', 'Pengambil Stok', 'Action']
+const columns = ['No', 'Total Kasbon', 'Potongan Per Bulan', 'Sisa Potongan', 'Jangka Potongan', 'Tipe', 'Status']
+const columnsEmployee = ['No', 'Nama Karyawan', 'Nomor Telepon', 'Status', 'Action']
 
-const StockPage = ({
+const DeductionPage = ({
   onChange,
   modalCreate,
+  modalAdd,
   modalEdit,
   modalDelete,
   handleModal,
   handleModalClose,
-  handleCreateStock,
+  handleCreateDeduction,
   handleEditStock,
   handleDeleteStock,
   form,
   onSubmit,
   handleDate,
   isFetching,
-  dataStock,
+  dataDeduction,
   handlePageChange,
   pagination,
   getDataEmployee,
   getEmployeeSelected,
   handleSelect,
-  typeUser,
+  getTypeUser,
 }) => {
-
   const modalBodyDelete = (
     <Container>
       <Row>
@@ -69,40 +70,60 @@ const StockPage = ({
   )
 
   const modalBodyCreate = (
+    <BasicTable columns={columnsEmployee}>
+    {
+      !isEmpty(getDataEmployee)?
+      getDataEmployee.map((item, index)  => (
+        <tr key={Math.random()}>
+          <td>{index + 1}</td>
+          <td>{item.employee_name}</td>
+          <td>{item.phone_number}</td>
+          <td>{item.status}</td>
+          <td className="d-flex justify-content-center">
+            <button
+              type="button"
+              className="btn icon-button"
+              onClick={() => handleModal({ field: 'add', data: item })}
+            >
+              <Icon type="edit" />
+            </button>
+          </td>
+        </tr>
+      )) : (
+        <tr>
+          <td colSpan="9" className="text-center py-5"><Empty /></td>
+        </tr>
+      )
+    }
+    </BasicTable>
+  )
+
+  const modalBodyDeduction = (
     <Form className="form-signin p-1 form-material">
       <Container>
         <Row>
           <Col md={12}>
             <Input
               onChange={onChange}
-              value={form.stock_name || ''}
-              name="stock_name"
+              value={form.total_cash_receipt || ''}
+              name="total_cash_receipt"
               type="text"
-              placeholder="Nama Stok Pakan"
+              placeholder="Total Kasbon"
             />
           </Col>
           <Col md={12}>
             <Input
               onChange={onChange}
-              value={form.in_stock || ''}
-              name="in_stock"
+              name="length_deduction"
+              value={form.length_deduction || ''}
               type="text"
-              placeholder="Stok Masuk"
-            />
-          </Col>
-          <Col md={12}>
-            <Input
-              onChange={onChange}
-              value={form.price_stock || ''}
-              name="price_stock"
-              type="text"
-              placeholder="Harga Stok Satuan"
+              placeholder="Jangka Potongan"
             />
           </Col>
         </Row>
       </Container>
 
-      <Button onClick={(e) => handleCreateStock(e)}>Submit</Button>
+      <Button onClick={(e) => handleCreateDeduction(e)}>Submit</Button>
     </Form>
   )
 
@@ -145,11 +166,11 @@ const StockPage = ({
   )
 
   return(
-    <Dashboard topik="stock" typeUser={typeUser}>
+    <Dashboard topik="kasbon" typeUser={getTypeUser}>
       <HeaderPage
-        active="Stok Pakan"
+        active="List Kasbon"
       >
-        Stok
+        List Kasbon
       </HeaderPage>
 
       <Card>
@@ -162,7 +183,7 @@ const StockPage = ({
                 onClick={() => handleModal({ field: 'create' })}
               >
                 <Icon type="plus" />
-                <small className="ml-2">Tambah Pakan</small>
+                <small className="ml-2">Tambah Kasbon</small>
               </button>
             </Col>
           </Row>
@@ -177,32 +198,23 @@ const StockPage = ({
           :
           <BasicTable columns={columns}>
           {
-            !isEmpty(dataStock)?
-            dataStock.map((item, index)  => (
+            !isEmpty(dataDeduction)?
+            dataDeduction.map((item, index)  => (
               <tr key={Math.random()}>
                 <td>{index + 1}</td>
-                <td><Link to={`stock/${item.id}`}>{item.stock_name}</Link></td>
-                <td>{item.current_stock} Karung</td>
-                <td>{item.in_stock} Karung</td>
-                <td>{item.out_stock} Karung</td>
-                <td>{!isEmpty(item.remaining_stock) ? item.remaining_stock : 0} Karung</td>
-                <td>{item.total_stock} Karung</td>
-                <td>{!isEmpty(item.actor) ? item.actor : '-'}</td>
-                <td className="d-flex justify-content-center">
-                  <button
-                    type="button"
-                    className="btn icon-button"
-                    onClick={() => handleModal({ field: 'edit', data: item })}
+                <td>{item.total_cash_receipt}</td>
+                <td>{item.cash_receipt_term}</td>
+                <td>{item.rest_receipt_term}</td>
+                <td>{item.monthly_deduction}</td>
+                <td>{item.deduce_type}</td>
+                <td className="text-center">
+                  <Badge
+                    pill
+                    variant={item.status ? "danger" : "success"}
+                    className="px-3"
                   >
-                    <Icon type="edit" />
-                  </button>
-                  <button
-                    type="button"
-                    className="btn icon-button"
-                    onClick={() => handleModal({ field: 'delete', id: item.id })}
-                  >
-                    <Icon type="delete" />
-                  </button>
+                    {String(startCase(toLower(item.status)))}
+                  </Badge>
                 </td>
               </tr>
             )) : (
@@ -235,8 +247,18 @@ const StockPage = ({
         <ModalItemAntd
           show={modalCreate}
           modalBody={modalBodyCreate}
-          modalHeader='Tambah Stok Pakan'
+          modalHeader='Tambah Kasbon'
           onCancel={() => handleModalClose({ field: 'create' })}
+          cancelButtonProps={{ style: { display: 'none' } }}
+          okButtonProps={{ style: { display: 'none' } }}
+          width={1000}
+        />
+
+        <ModalItemAntd
+          show={modalAdd}
+          modalBody={modalBodyDeduction}
+          modalHeader='Tambah Kasbon'
+          onCancel={() => handleModalClose({ field: 'add' })}
           cancelButtonProps={{ style: { display: 'none' } }}
           okButtonProps={{ style: { display: 'none' } }}
         />
@@ -263,27 +285,28 @@ const StockPage = ({
   )
 }
 
-StockPage.propTypes = {
+DeductionPage.propTypes = {
   onChange: PropTypes.func,
   handleDate: PropTypes.func,
   handlePageChange: PropTypes.func,
   handleSelect: PropTypes.func,
   isFetching: PropTypes.bool,
   modalCreate: PropTypes.bool,
+  modalAdd: PropTypes.bool,
   modalEdit: PropTypes.bool,
   modalDelete: PropTypes.bool,
   isFetching: PropTypes.bool,
   handleModal: PropTypes.func,
   handleModalClose: PropTypes.func,
-  handleCreateStock: PropTypes.func,
+  handleCreateDeduction: PropTypes.func,
   handleEditStock: PropTypes.func,
   handleDeleteStock: PropTypes.func,
   form: PropTypes.any,
-  dataStock: PropTypes.array,
+  dataDeduction: PropTypes.array,
   pagination: PropTypes.object,
   getDataEmployee: PropTypes.array,
   getEmployeeSelected: PropTypes.object,
-  typeUser: PropTypes.string,
+  getTypeUser: PropTypes.string,
 }
 
-export default StockPage
+export default DeductionPage

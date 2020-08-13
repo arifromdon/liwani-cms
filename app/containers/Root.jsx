@@ -11,8 +11,8 @@ import PrivateLayout from 'containers/layouts/PrivateLayout'
 import Login from 'containers/login/Login'
 import NotFound from 'containers/NotFound'
 import Dashboard from 'containers/dashboard'
-import Stock from 'containers/stock'
-import DetailStock from 'containers/stock/detail'
+import Deduction from 'containers/deduction'
+import DetailDeduction from 'containers/deduction/detail'
 import Recap from 'containers/recap'
 import DetailRecap from 'containers/recap/detail'
 import Absent from 'containers/absent'
@@ -69,8 +69,8 @@ const Root = ({ store, persistor }) => (
           <PublicRoute exact path="/forgot-password" component={Forgot} />
           <PublicRoute exact path="/forgot" component={CheckToken} />
           <PublicRoute exact path="/dashboard" component={Dashboard} />
-          <PublicRoute exact path="/stock" component={Stock} />
-          <PublicRoute exact path="/stock/:id" component={DetailStock} />
+          <PublicRoute exact path="/deduction" component={Deduction} />
+          <PublicRoute exact path="/deduction/:id" component={DetailDeduction} />
           <PublicRoute exact path="/recap" component={Recap} />
           <PublicRoute exact path="/recap/:id" component={DetailRecap} />
           <PublicRoute exact path="/absent" component={Absent} />

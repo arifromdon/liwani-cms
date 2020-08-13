@@ -8,7 +8,8 @@ const ModalItemAntd = ({
   modalClose,
   cancelButtonProps,
   okButtonProps,
-  onCancel
+  onCancel,
+  width
 }) => (
   <div>
     <Modal
@@ -18,6 +19,7 @@ const ModalItemAntd = ({
       onCancel={onCancel}
       cancelButtonProps={cancelButtonProps}
       okButtonProps={okButtonProps}
+      width={width}
     >
       {modalBody}
     </Modal>
@@ -30,6 +32,7 @@ ModalItemAntd.propTypes = {
   cancelButtonProps: PropTypes.any,
   okButtonProps: PropTypes.any,
   modalHeader: PropTypes.string,
+  width: PropTypes.string,
   modalClose: PropTypes.func,
   onCancel: PropTypes.func,
 }

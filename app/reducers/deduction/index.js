@@ -1,31 +1,30 @@
 import {
-  LIST_STOCK_REQUEST,
-  LIST_STOCK_SUCCESS,
-  LIST_STOCK_FAILURE,
+  LIST_DEDUCTION_REQUEST,
+  LIST_DEDUCTION_SUCCESS,
+  LIST_DEDUCTION_FAILURE,
 } from 'constants/ActionTypes'
 
 const initialState = {
   isFetching: false,
-  dataStock: [],
+  dataDeduction: [],
   pagination: [],
 }
 
-export default function stock(state = initialState, action) {
+export default function deduction(state = initialState, action) {
   switch (action.type) {
-    case LIST_STOCK_REQUEST:
+    case LIST_DEDUCTION_REQUEST:
       return {
         ...state,
         isFetching: true,
       }
-    case LIST_STOCK_SUCCESS:
+    case LIST_DEDUCTION_SUCCESS:
       return {
         ...state,
         isFetching: false,
         errorMessage: null,
-        dataStock: action.data.data.data,
-        pagination: action.data.data.pagination,
+        dataDeduction: action.data.data,
       }
-    case LIST_STOCK_FAILURE:
+    case LIST_DEDUCTION_FAILURE:
       return {
         ...state,
         isFetching: false,

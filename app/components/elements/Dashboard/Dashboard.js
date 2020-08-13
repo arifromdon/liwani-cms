@@ -52,9 +52,9 @@ class Dashboard extends Component {
                   <span className="nav-text">Dashboard</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key="stock">
-                <Link to="/stock">
-                  <span className="nav-text">Stok</span>
+              <Menu.Item key="kasbon">
+                <Link to="/deduction">
+                  <span className="nav-text">Kasbon</span>
                 </Link>
               </Menu.Item>
               <Menu.Item key="absent">
@@ -102,7 +102,7 @@ Dashboard.propTypes = {
   children: PropTypes.any,
   topik: PropTypes.string,
   logout: PropTypes.func,
-  // typeUser: PropTypes.string,
+  typeUser: PropTypes.string,
 }
 
 const mapDispatchToProps = dispatch => ({

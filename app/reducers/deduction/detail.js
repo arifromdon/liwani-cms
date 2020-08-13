@@ -1,7 +1,7 @@
 import {
-  DETAIL_STOCK_REQUEST,
-  DETAIL_STOCK_SUCCESS,
-  DETAIL_STOCK_FAILURE,
+  DETAIL_DEDUCTION_REQUEST,
+  DETAIL_DEDUCTION_SUCCESS,
+  DETAIL_DEDUCTION_FAILURE,
 } from 'constants/ActionTypes'
 
 const initialState = {
@@ -11,19 +11,19 @@ const initialState = {
 
 export default function detailStock(state = initialState, action) {
   switch (action.type) {
-    case DETAIL_STOCK_REQUEST:
+    case DETAIL_DEDUCTION_REQUEST:
       return {
         ...state,
         isFetchingDetail: true,
       }
-    case DETAIL_STOCK_SUCCESS:
+    case DETAIL_DEDUCTION_SUCCESS:
       return {
         ...state,
         isFetchingDetail: false,
         errorMessage: null,
         dataDetailStock: action.data.data,
       }
-    case DETAIL_STOCK_FAILURE:
+    case DETAIL_DEDUCTION_FAILURE:
       return {
         ...state,
         isFetchingDetail: false,

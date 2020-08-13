@@ -9,34 +9,31 @@ import {
   lifecycle,
   withState
 } from 'recompose'
-import {
-  fetchRecap,
-  exportRecap,
-  detailRecap,
-} from 'actions/recap'
+import { detailRecap, historyRecapSalary } from 'actions/recap'
 import RecapView from 'components/pages/recap'
 
 export function mapStateToProps(state) {
   const {
-    isFetching,
-    errorMessage,
-    dataRecap,
-    pagination,
-  } = state.root.recap
+    isFetchingDetail,
+    dataDetailRecap,
+  } = state.root.detailRecap
 
-  const { typeUser } = state.root.auth
+  const {
+    isFetchingHistory,
+    dataHistoryRecap,
+  } = state.root.historyRecap
 
   return {
-    isFetching,
-    errorMessage,
-    dataRecap,
-    pagination,
-    typeUser,
+    isFetchingDetail,
+    dataDetailRecap,
+    isFetchingHistory,
+    dataHistoryRecap,
   }
 }
+
 const mapDispatchToProps = dispatch => ({
-  fetchRecap: bindActionCreators(fetchRecap, dispatch),
-  exportRecap: bindActionCreators(exportRecap, dispatch),
+  detailRecap: bindActionCreators(detailRecap, dispatch),
+  historyRecapSalary: bindActionCreators(historyRecapSalary, dispatch),
 })
 
 export default compose(
@@ -44,54 +41,38 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  withState('exportBulk', 'setExportBulk', []),
-  withState('exportSalary', 'setExportSalary', []),
-  withState('exportStock', 'setExportStock', []),
-  withState('modalExportBulk', 'setModalExportBulk', false),
-  withState('modalExportStock', 'setModalExportStock', false),
-  withState('modalExportSalary', 'setModalExportSalary', false),
   withState('getTarget', 'setGetTarget', ''),
+  withState('recapMonth', 'setRecapMonth', ''),
+  withState('getMonth', 'setGetMonth', ''),
+  withState('getCounting', 'setGetCounting', 0),
+  withState('getTypeUser', 'setTypeUser', ''),
   withHandlers({
-    handleDetailRecap: props => (data) => {
-      props.detailRecap(data)
+    handleDateRecap: props => (data) => {
+      props.detailRecap({ date: { "date": moment(data).format("MMMM YYYY").toUpperCase() }, target: props.getTarget })
+      props.historyRecapSalary({ month: moment(data).format("MMMM YYYY") })
+      props.setGetMonth(moment(data).format("YYYY").toUpperCase())
     },
-    handleExport: props => (params) => {
-      const exportDate = moment(params).format("MMMM YYYY").toUpperCase()
-      const targetExport = props.getTarget
-
-      if (targetExport === 'salary') {
-        props.exportRecap({ target: targetExport, data: exportDate })
-      } else if (targetExport === 'stock') {
-        props.exportRecap({ target: targetExport, data: exportDate })
-      } else if (targetExport === 'bulk') {
-        props.exportRecap({ target: targetExport, data: exportDate })
+    handleExport: props => () => {
+      props.detailRecap({ date: props.recapMonth, target: props.getTarget })
+    },
+    handleSelect: props => (data) => {
+      if (data.field === 'province') {
+        props.setProvinceSelected(!isEmpty(data) ? data.value : undefined)
+      } else if (data.field === 'district') {
+        props.setDistrictSelected(!isEmpty(data) ? data.value : undefined)
+      } else if (data.field === 'subDistrict') {
+        props.setSubDistrictSelected(!isEmpty(data) ? data.value : undefined)
       }
     },
-    handleModalExport: props => (data) => {
-      if (data.field === 'bulk') {
-        props.setModalExportBulk(true)
-        props.setGetTarget('bulk')
-      } else if (data.field === 'stock') {
-        props.setModalExportStock(true)
-        props.setGetTarget('stock')
-      } else if (data.field === 'salary') {
-        props.setModalExportSalary(true)
-        props.setGetTarget('salary')
-      }
-    },
-    handleModalClose: props => (data) => {
-      if (data.field === 'bulk') {
-        props.setModalExportBulk(false)
-      } else if (data.field === 'stock') {
-        props.setModalExportStock(false)
-      } else if (data.field === 'salary') {
-        props.setModalExportSalary(false)
-      }
+    handleCounting: props => () => {
+      props.setGetCounting(props.getCounting + 1)
     },
   }),
   lifecycle({
     componentWillMount() {
-      this.props.fetchRecap()
+      this.props.setGetTarget(this.props.location.pathname)
+      this.props.setTypeUser(localStorage.getItem("user"))
+      // this.props.secondsToHms()
     }
   }),
 )(RecapView)

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { isEmpty, capitalize } from 'lodash'
+import { isEmpty, startCase, toLower, first } from 'lodash'
 import { bindActionCreators } from 'redux'
 import moment from 'moment'
 import {
@@ -15,6 +15,7 @@ import {
   deleteEmployee
 } from 'actions/employee'
 import { historyRecapSalary } from 'actions/recap'
+import { fetchPosition } from 'actions/position'
 import withForms from 'utils/hocs/withForms'
 import DashboardView from 'components/pages/dashboard'
 
@@ -24,8 +25,6 @@ export function mapStateToProps(state) {
     pagination,
     dataEmployee,
   } = state.root.employee
-
-  const { typeUser } = state.root.auth
 
   const {
     isFetchingHistory,
@@ -41,14 +40,20 @@ export function mapStateToProps(state) {
     isFetchingUpdate,
   } = state.root.updateEmployee
 
+  const {
+    isFetchingPosition,
+    dataPosition,
+  } = state.root.position
+
   return {
     dataEmployee,
     isFetchingCreate,
     isFetchingUpdate,
     isFetching,
+    isFetchingPosition,
     pagination,
     dataEmployeeCreate,
-    typeUser,
+    dataPosition,
   }
 }
 
@@ -58,9 +63,8 @@ const mapDispatchToProps = dispatch => ({
   updateEmployee: bindActionCreators(updateEmployee, dispatch),
   deleteEmployee: bindActionCreators(deleteEmployee, dispatch),
   historyRecapSalary: bindActionCreators(historyRecapSalary, dispatch),
+  fetchPosition: bindActionCreators(fetchPosition, dispatch),
 })
-
-// const formData = new FormData()
 
 export default compose(
   connect(
@@ -72,17 +76,13 @@ export default compose(
   withState('modalDelete', 'setModalDelete', false),
   withState('getId', 'setGetId', {}),
   withState('getDate', 'setGetDate', ''),
+  withState('getTypeUser', 'setTypeUser', ''),
   withState('positionSelected', 'setPositionSelected', undefined),
   withState('statusSelected', 'setStatusSelected', undefined),
   withState('filterStatusSelected', 'setFilterStatusSelected', undefined),
   withState('filterPositionSelected', 'setFilterPositionSelected', undefined),
   withState('listEmployee', 'setListEmployee', []),
-  withState('getPosition', 'setPosition', [
-    {value: 'admin', label: 'Admin'},
-    {value: 'petani', label: 'Petani'},
-    {value: 'karyawan', label: 'Karyawan'},
-    {value: 'kepala_kebun', label: 'Kepala Kebun'},
-  ]),
+  withState('listPosition', 'setListPosition', {}),
   withState('getStatus', 'setStatus', [
     {value: 'tetap', label: 'Tetap'},
     {value: 'kontrak', label: 'Kontrak'},
@@ -136,10 +136,12 @@ export default compose(
     },
     handleCreateEmployee: props => (data) => {
       data.preventDefault()
+      console.log('props.form; ', props.form)
       const dataCreate = {
         ...props.form,
         salary_per_day: parseInt(props.form.salary_per_day),
         position: props.positionSelected.value,
+        position_id: props.positionSelected.id,
         status: props.statusSelected.value,
         total_deduction: 0,
         monthly_deduction: 0,
@@ -147,6 +149,7 @@ export default compose(
         total_salary: 0,
         join: props.getDate
       }
+
       props.createEmployee(dataCreate)
 
       setTimeout(() => {
@@ -157,9 +160,10 @@ export default compose(
     },
     handleEditEmployee: props => (data) => {
       data.preventDefault()
+
       const dataEdit = {
         ...props.form,
-        position: props.positionSelected.value,
+        position_id: props.positionSelected.id,
         status: props.statusSelected.value,
         join: props.getDate
       }
@@ -175,6 +179,15 @@ export default compose(
     handleSelect: props => (data) => {
       if (data.field === 'position') {
         props.setPositionSelected(!isEmpty(data) ? data.value : undefined)
+        const post = props.dataPosition.filter(item => item.position_name === data.value.value)
+        const allowance = {
+          ...props.form,
+          positional_allowance: first(post).positional_allowance,
+          transportation_allowance: first(post).transportation_allowance,
+          meal_allowances: first(post).meal_allowances,
+          salary_per_day: first(post).salary / 24
+        }
+        props.setForm(allowance)
       } else if (data.field === 'status') {
         props.setStatusSelected(!isEmpty(data) ? data.value : undefined)
       } 
@@ -205,10 +218,33 @@ export default compose(
   }),
   lifecycle({
     componentWillMount() {
-      this.props.fetchEmployee('?page=1&per=10')
+      const {
+        dataPosition,
+        historyRecapSalary,
+        fetchPosition,
+        fetchEmployee,
+        setListPosition,
+        setTypeUser,
+      } = this.props
+
+      setTypeUser(localStorage.getItem("user"))
+
+      fetchEmployee('?page=1&per=10')
+      fetchPosition()
+
       let today = new Date();
       let currentMonth = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-      this.props.historyRecapSalary({ month: moment(currentMonth).format("MMMM YYYY") })
+      historyRecapSalary({ month: moment(currentMonth).format("MMMM YYYY") })
+
+      const arr = []
+      !isEmpty(dataPosition) &&
+      dataPosition.map((item, index) => {
+        const data = { id: item.id, value: item.position_name, label: startCase(toLower(item.position_name.replace(/_/g, " "))) }
+        arr.push(data)
+      })
+
+      setListPosition(arr)
+
     },
   }),
 )(DashboardView)

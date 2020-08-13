@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux'
 import site from 'reducers/Site'
 import auth from './Auth'
-import stock from './stock'
-import detailStock from './stock/detail'
+import deduction from './deduction'
+import detailDeduction from './deduction/detail'
+import createDeduction from './deduction/create'
 import absent from './absent'
 import createAbsent from './absent/create'
 import salary from './salary'
@@ -17,11 +18,12 @@ import updateEmployee from './employees/updateEmployee'
 import resetPassword from './forgot/ResetPassword'
 import checkToken from './forgot/CheckToken'
 import forgot from './forgot'
+import position from './position'
 
 export default combineReducers({
   site,
   auth,
-  stock,
+  deduction,
   absent,
   salary,
   recap,
@@ -31,10 +33,12 @@ export default combineReducers({
   createEmployee,
   updateEmployee,
   createAbsent,
-  detailStock,
+  detailDeduction,
   resetPassword,
   checkToken,
   forgot,
   historyRecap,
   recapEmployee,
+  position,
+  createDeduction
 })

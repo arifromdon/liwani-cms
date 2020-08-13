@@ -10,42 +10,46 @@ import {
   withState
 } from 'recompose'
 import {
-  fetchStock,
-  createStock,
+  fetchDeduction,
+  createDeduction,
   updateStock,
   deleteStock
-} from 'actions/stock'
+} from 'actions/deduction'
 import { fetchEmployee } from 'actions/employee'
 import withForms from 'utils/hocs/withForms'
-import StockView from 'components/pages/stock'
+import DeductionView from 'components/pages/deduction'
 
 export function mapStateToProps(state) {
   const {
     isFetching,
-    dataStock,
-    pagination,
+    dataDeduction,
     errorMessage,
-  } = state.root.stock
+  } = state.root.deduction
+
+  const {
+    isFetchingCreate,
+    errorMessageCreate,
+  } = state.root.createDeduction
 
   const {
     dataEmployee,
+    pagination,
   } = state.root.employee
 
-  const { typeUser } = state.root.auth
-
   return {
+    isFetchingCreate,
+    errorMessageCreate,
     isFetching,
-    dataStock,
-    pagination,
+    dataDeduction,
     errorMessage,
     dataEmployee,
-    typeUser,
+    pagination,
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchStock: bindActionCreators(fetchStock, dispatch),
-  createStock: bindActionCreators(createStock, dispatch),
+  fetchDeduction: bindActionCreators(fetchDeduction, dispatch),
+  createDeduction: bindActionCreators(createDeduction, dispatch),
   updateStock: bindActionCreators(updateStock, dispatch),
   deleteStock: bindActionCreators(deleteStock, dispatch),
   fetchEmployee: bindActionCreators(fetchEmployee, dispatch),
@@ -57,9 +61,11 @@ export default compose(
     mapDispatchToProps,
   ),
   withState('modalCreate', 'setModalCreate', false),
+  withState('modalAdd', 'setModalAdd', false),
   withState('modalEdit', 'setModalEdit', false),
   withState('modalDelete', 'setModalDelete', false),
   withState('getId', 'setGetId', ''),
+  withState('getTypeUser', 'setTypeUser', ''),
   withState('getDateStockIn', 'setGetDateStockIn', ''),
   withState('getDateStockOut', 'setGetDateStockOut', ''),
   withState('getDataEmployee', 'setDataEmployee', []),
@@ -74,7 +80,7 @@ export default compose(
       const { searchValue } = props
       const page = `${searchValue.page ? `?page=${searchValue.page}&per=10` : ''}`
       const params = page ? `${page}${searchValue.status ? `&status_employee=${searchValue.status}` : ''}${searchValue.page && (searchValue.status || searchValue.position) && '&'}${searchValue.position ? `jabatan=${searchValue.position}` : ''}` : ''
-      props.fetchStock(`${params}`)
+      props.fetchDeduction(`${params}`)
     },
   }),
   withHandlers({
@@ -102,18 +108,19 @@ export default compose(
         props.setGetDateStockOut(moment(data.date).format("DD MMMM YYYY"))
       }
     },
-    handleCreateStock: props => (data) => {
+    handleCreateDeduction: props => (data) => {
       data.preventDefault()
-      props.createStock({
+      props.createDeduction({
         ...props.form,
-        price_stock: parseInt(props.form.price_stock),
-        in_stock: parseInt(props.form.in_stock),
+        employee_id: props.getId,
       })
 
       setTimeout(() => {
         props.search()
         props.setForm('')
         props.setModalCreate(false)
+        props.setModalAdd(false)
+        message.error(props.errorMessageCreate)
       }, 500)
     },
     handleEditStock: props => (data) => {
@@ -145,6 +152,9 @@ export default compose(
     handleModal: props => (params) => {
       if (params.field === 'create') {
         props.setModalCreate(true)
+      } else if (params.field === 'add') {
+        props.setModalAdd(true)
+        props.setGetId(params.data.id)
       } else if (params.field === 'edit') {
         props.setModalEdit(true)
         props.setForm(params.data)
@@ -158,6 +168,9 @@ export default compose(
       if (data.field === 'create') {
         props.setModalCreate(false)
         props.setForm('')
+      } else if (data.field === 'add') {
+        props.setModalAdd(false)
+        props.setForm('')
       } else if (data.field === 'edit') {
         props.setModalEdit(false)
         props.setForm('')
@@ -170,23 +183,26 @@ export default compose(
     componentWillMount() {
       const {
         dataEmployee,
-        fetchStock,
+        fetchDeduction,
         fetchEmployee,
         setDataEmployee,
-        pagination,
-        dataStock,
+        dataDeduction,
+        errorMessageCreate,
+        setTypeUser,
       } = this.props
-      fetchStock('?page=1&per=10')
+
+      setTypeUser(localStorage.getItem("user"))
+
+      fetchDeduction('?page=1&per=10')
       fetchEmployee()
 
       const arr = []
       !isEmpty(dataEmployee) &&
       dataEmployee.map((item, index) => {
-        let data = { value: item.email, label: item.employee_name }
-        return arr.push(data)
+        return arr.push(item)
       })
 
       setDataEmployee(arr)
     }
   }),
-)(StockView)
+)(DeductionView)

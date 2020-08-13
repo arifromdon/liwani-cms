@@ -11,6 +11,7 @@ const initialState = {
 }
 
 export default function employee(state = initialState, action) {
+  console.log('action: ', action)
   switch (action.type) {
     case LIST_EMPLOYEE_REQUEST:
       return {
@@ -22,8 +23,8 @@ export default function employee(state = initialState, action) {
         ...state,
         isFetching: false,
         errorMessage: null,
-        dataEmployee: action.data.data.data,
-        pagination: action.data.data.pagination,
+        dataEmployee: action.data.data,
+        pagination: action.data.pagination,
       }
     case LIST_EMPLOYEE_FAILURE:
       return {

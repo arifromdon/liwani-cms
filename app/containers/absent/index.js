@@ -26,8 +26,6 @@ export function mapStateToProps(state) {
     pagination,
   } = state.root.absent
 
-  const { typeUser } = state.root.auth
-
   const {
     dataEmployee,
   } = state.root.employee
@@ -45,7 +43,6 @@ export function mapStateToProps(state) {
     dataEmployee,
     messageCreate,
     dataCreateAbsent,
-    typeUser,
   }
 }
 const mapDispatchToProps = dispatch => ({
@@ -64,6 +61,7 @@ export default compose(
   withState('modalEdit', 'setModalEdit', false),
   withState('modalCreate', 'setModalCreate', false),
   withState('getId', 'setGetId', ''),
+  withState('getTypeUser', 'setTypeUser', ''),
   withState('statusAbsenstSelected', 'setStatusAbsenstSelected', undefined),
   withState('getDataEmployee', 'setDataEmployee', []),
   withState('getEmployeeSelected', 'setEmployeeSelected', undefined),
@@ -179,9 +177,12 @@ export default compose(
         setDataEmployee,
         statusAbsent,
         dataAbsent,
+        setTypeUser,
       } = this.props
       fetchAbsent('?page=1')
       fetchEmployee()
+
+      setTypeUser(localStorage.getItem("user"))
 
       const arr = []
       !isEmpty(dataEmployee) &&

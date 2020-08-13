@@ -7,6 +7,7 @@ const Input = (props) => {
     type,
     name,
     placeholder,
+    disabled,
   } = props
   return (
     <div className="form-group">
@@ -18,6 +19,8 @@ const Input = (props) => {
           value={value}
           name={name}
           placeholder={placeholder}
+          disabled={disabled}
+          required
         />
       </div>
     </div>
@@ -30,6 +33,7 @@ Input.propTypes = {
   value: PropTypes.any,
   name: PropTypes.string,
   placeholder: PropTypes.string,
+  disabled: PropTypes.bool,
 }
 
 export default Input

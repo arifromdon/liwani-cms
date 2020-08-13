@@ -14,9 +14,9 @@ import {
   SelectComponent,
   Input
 } from 'components/elements'
-import { isEmpty } from 'lodash'
+import { isEmpty, startCase, toLower } from 'lodash'
 import { Icon, Empty } from 'antd'
-import { Spinner, Container, Row, Col, Form } from 'react-bootstrap'
+import { Spinner, Container, Row, Col, Form, Badge } from 'react-bootstrap'
 import moment from 'moment'
 
 const columns = ['No', 'Nama Karyawan', 'Jam Masuk' , 'Jam Keluar', 'Position', 'Tanggal', 'Status', 'Action']
@@ -39,8 +39,9 @@ const AbsentPage = ({
   pagination,
   getDataEmployee,
   getEmployeeSelected,
-  typeUser,
+  getTypeUser,
 }) => {
+
   const modalBodyEdit = (
     <Form className="form-signin p-1 form-material">
       <Container>
@@ -93,7 +94,7 @@ const AbsentPage = ({
   )
 
   return (
-    <Dashboard topik="absent" typeUser={typeUser}>
+    <Dashboard topik="absent" typeUser={getTypeUser}>
       <HeaderPage active="Absensi Karyawan" />
 
       <Card>
@@ -129,18 +130,23 @@ const AbsentPage = ({
                     <td>{item.employee_name}</td>
                     <td>{!isEmpty(item.entry_hour) ? moment(item.entry_hour).format("HH:MM") : '00:00'}</td>
                     <td>{!isEmpty(item.out_hour) ? moment(item.out_hour).format("HH:MM") : '00:00'}</td>
-                    <td>{item.position}</td>
+                    <td>{startCase(toLower(item.position.position_name))}</td>
                     <td>{moment(item.date).format("DD-MM-YYYY")}</td>
-                    <td>
-                      <span className="badge badge-primary">
-                        {item.status_absent}
-                      </span>
+                    <td className="text-center">
+                      <Badge
+                        pill
+                        variant={item.status_absent === 'masuk' ? "success" : "danger"}
+                        className="px-3 py-2"
+                      >
+                        {startCase(toLower(item.status_absent))}
+                      </Badge>
                     </td>
                     <td className="d-flex justify-content-center">
                       <button
                         type="button"
                         className="btn icon-button"
-                        onClick={() => handleModal({ field: 'edit', id: item.id })}
+                        onClick={() => handleModal({ field: 'edit', id: item.employee_id })}
+                        disabled={item.status_absent === 'alpa' || item.status_absent === 'cuti' ? true : false}
                       >
                         <Icon type="edit" />
                       </button>
@@ -165,7 +171,7 @@ const AbsentPage = ({
             pageRangeDisplayed={5}
             itemsCountPerPage={10}
             onChange={handlePageChange}
-            totalItemsCount={isEmpty(pagination) ? 0 : (pagination.total_pages * 10)}
+            totalItemsCount={isEmpty(pagination) ? 0 : (pagination.total_page * 10)}
             activePage={isEmpty(pagination) ? 0 : pagination.current_page}
             linkClassFirst="symbol-arrow"
             linkClassPrev="symbol-arrow"
@@ -215,7 +221,7 @@ AbsentPage.propTypes = {
   statusAbsent: PropTypes.array,
   dataAbsent: PropTypes.array,
   getDataEmployee: PropTypes.array,
-  typeUser: PropTypes.string,
+  getTypeUser: PropTypes.string,
 }
 
 export default AbsentPage

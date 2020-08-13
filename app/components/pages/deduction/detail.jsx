@@ -17,10 +17,10 @@ import {
 const DetailStock = ({
   isFetchingDetail,
   dataDetailStock,
-  typeUser,
+  getTypeUser,
 }) => {
   return(
-    <Dashboard topik="stock" typeUser={typeUser}>
+    <Dashboard topik="stock" typeUser={getTypeUser}>
       <HeaderPage
         active="Detail Stok Pakan"
       >
@@ -90,7 +90,7 @@ const DetailStock = ({
 DetailStock.propTypes = {
   isFetchingDetail: PropTypes.bool,
   dataDetailStock: PropTypes.object,
-  typeUser: PropTypes.string,
+  getTypeUser: PropTypes.string,
 }
 
 export default DetailStock

@@ -9,8 +9,8 @@ import {
   lifecycle,
   withState
 } from 'recompose'
-import { fetchDetailStock } from 'actions/stock'
-import DetailStockView from 'components/pages/stock/detail'
+import { fetchDetailStock } from 'actions/deduction'
+import DetailDeductionView from 'components/pages/deduction/detail'
 
 export function mapStateToProps(state) {
   const {
@@ -19,13 +19,10 @@ export function mapStateToProps(state) {
     errorMessage,
   } = state.root.detailStock
 
-  const { typeUser } = state.root.auth
-
   return {
     isFetchingDetail,
     dataDetailStock,
     errorMessage,
-    typeUser,  
   }
 }
 
@@ -39,7 +36,7 @@ export default compose(
     mapDispatchToProps,
   ),
   // withState('modalCreate', 'setModalCreate', false),
-  // withState('getId', 'setGetId', ''),
+  withState('getTypeUser', 'setTypeUser', ''),
   // withHandlers({
   //   handleSelect: props => (data) => {
   //     if (data.field === 'province') {
@@ -56,7 +53,9 @@ export default compose(
       let pathTarget = this.props.location.pathname
       let getIdPathname = pathTarget.substring(pathTarget.lastIndexOf('/') + 1)
 
+      this.props.setTypeUser(localStorage.getItem("user"))
+
       this.props.fetchDetailStock(getIdPathname)
     }
   }),
-)(DetailStockView)
+)(DetailDeductionView)

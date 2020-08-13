@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import ReactExport from 'react-export-excel';
 import { Link } from 'react-router-dom'
-import { isEmpty, sum } from 'lodash'
+import { isEmpty, sum, startCase, toLower } from 'lodash'
 import { Spinner, Container, Row, Col } from 'react-bootstrap'
 import {
   Dashboard,
@@ -21,7 +21,7 @@ const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
-const columns = ['No', 'Nama Karyawan', 'Jabatan', 'Total Jam Kerja (Jam)', 'Status', 'Total Upah']
+const columns = ['No', 'Nama Karyawan', 'Jabatan', 'Tunjangan Makan', 'Tunjangan Jabatan', 'Tunjangan Transportasi', 'Status', 'Total Upah']
 const columnsStock = ['No', 'Nama Stok', 'Stok Saat Ini' , 'Total Stok', 'Harga Stok Satuan', 'Total Harga Stok']
 
 const DetailRecap = ({
@@ -31,12 +31,12 @@ const DetailRecap = ({
   handleDateRecap,
   isFetchingHistory,
   dataHistoryRecap,
-  typeUser,
+  getTypeUser,
   getHours,
 }) => {
 
   return(
-    <Dashboard topik="recap" typeUser={typeUser}>
+    <Dashboard topik="recap" typeUser={getTypeUser}>
       <HeaderPage
         active={getTarget !== '/recap/show_stock' ? 'Detail Rekap Gaji' : 'Detail Rekap Stok'}
       >
@@ -73,14 +73,17 @@ const DetailRecap = ({
           getTarget !== '/recap/show_stock' ?
             !isEmpty(dataHistoryRecap) && !isFetchingHistory ? 
             dataHistoryRecap.map((item, index) => {
+
               return (
                 <tr key={Math.random()}>
                   <td>{index + 1}</td>
                   <td>{item.employee_name}</td>
-                  <td>{item.position}</td>
-                  <td>{getHours}</td>
+                  <td>{!isEmpty(item.position) && startCase(toLower(item.position.position_name))}</td>
+                  <td>Rp. {!isEmpty(item.position) && toRp(item.position.meal_allowances)}</td>
+                  <td>Rp. {!isEmpty(item.position) && toRp(item.position.positional_allowance)}</td>
+                  <td>Rp. {!isEmpty(item.position) && toRp(item.position.transportation_allowance)}</td>
                   <td>{item.status}</td>
-                  <td>Rp. {!isEmpty(item.total_salary) ? toRp(item.total_salary) : '0'}</td>
+                  <td>Rp. {toRp(item.total_salary)}</td>
                 </tr>
               )
             })
@@ -100,7 +103,7 @@ const DetailRecap = ({
                   <td>{item.current_stock}</td>
                   <td>{item.total_stock}</td>
                   <td>{!isEmpty(item.price_stock) ? toRp(item.price_stock) : '0'}</td>
-                  <td>{!isEmpty(item.total_price_stock) ? toRp(item.total_price_stock) : '0'}</td>
+                  <td>{toRp(item.total_price_stock)}</td>
                 </tr>
               )
             })
@@ -112,12 +115,12 @@ const DetailRecap = ({
             </tr>
           }
           <tr>
-            <td colSpan={getTarget !== '/recap/show_stock' ? '5' : '5'} className="font-weight-bold text-right">Total: </td>
+            <td colSpan={getTarget !== '/recap/show_stock' ? '7' : '5'} className="font-weight-bold text-right">Total: </td>
             <td colSpan='2' className="font-weight-bold">{
               getTarget !== '/recap/show_stock' ?
               toRp(sum(Object.values(!isEmpty(dataHistoryRecap) && dataHistoryRecap.map(item => !isEmpty(item) && item.total_salary))), 'Rp. ')
               :
-              toRp(sum(Object.values(dataDetailRecap.map(item => !isEmpty(item.total_price_stock) ? item.total_price_stock : '0'))), 'Rp. ')
+              toRp(sum(Object.values(dataDetailRecap.map(item => item.total_price_stock))), 'Rp. ')
             }
             </td>
           </tr>
@@ -136,7 +139,7 @@ DetailRecap.propTypes = {
   isFetchingDetail: PropTypes.bool,
   dataDetailRecap: PropTypes.array,
   getTarget: PropTypes.string,
-  typeUser: PropTypes.string,
+  getTypeUser: PropTypes.string,
   getHours: PropTypes.string,
 }
 

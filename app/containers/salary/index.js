@@ -27,8 +27,6 @@ export function mapStateToProps(state) {
     pagination,
   } = state.root.salary
 
-  const { typeUser } = state.root.auth
-
   const {
     isFetchingHistory,
     dataHistoryRecap,
@@ -39,7 +37,6 @@ export function mapStateToProps(state) {
     errorMessage,
     dataSalary,
     pagination,
-    typeUser,
   }
 }
 const mapDispatchToProps = dispatch => ({
@@ -58,6 +55,7 @@ export default compose(
   withState('modalEditSallary', 'setModalEditSallary', false),
   withState('modalEditCashReceipt', 'setModalEditCashReceipt', false),
   withState('getId', 'setGetId', ''),
+  withState('getTypeUser', 'setTypeUser', ''),
   withState('searchValue', 'setSearchValue', {
     position: '',
     page: '1',
@@ -122,6 +120,7 @@ export default compose(
   lifecycle({
     componentWillMount() {
       this.props.fetchSalary('?page=1&per=10')
+      this.props.setTypeUser(localStorage.getItem("user"))
 
       // let today = new Date();
       // let currentMonth = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();

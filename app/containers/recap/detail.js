@@ -18,8 +18,6 @@ export function mapStateToProps(state) {
     dataDetailRecap,
   } = state.root.detailRecap
 
-  const { typeUser } = state.root.auth
-
   const {
     isFetchingHistory,
     dataHistoryRecap,
@@ -30,7 +28,6 @@ export function mapStateToProps(state) {
     dataDetailRecap,
     isFetchingHistory,
     dataHistoryRecap,
-    typeUser,
   }
 }
 
@@ -47,6 +44,7 @@ export default compose(
   withState('getTarget', 'setGetTarget', ''),
   withState('recapMonth', 'setRecapMonth', ''),
   withState('getHours', 'setGetHours', ''),
+  withState('getTypeUser', 'setTypeUser', ''),
   withHandlers({
     handleDateRecap: props => (data) => {
       props.detailRecap({ date: { "date": moment(data).format("MMMM YYYY").toUpperCase() }, target: props.getTarget })
@@ -64,20 +62,21 @@ export default compose(
         props.setSubDistrictSelected(!isEmpty(data) ? data.value : undefined)
       }
     },
-    secondsToHms: props => () => {
-      let hours
-      !isEmpty(props.dataHistoryRecap) &&
-      props.dataHistoryRecap.map((item, index) => {
-        hours = Math.floor(item.work_hours / 3600);
-      })
-
-      props.setGetHours(hours)
-    },
+    // secondsToHms: props => () => {
+    //   let hours
+    //   !isEmpty(props.dataHistoryRecap) &&
+    //   props.dataHistoryRecap.map((item, index) => {
+    //     hours = Math.floor(item.work_hours / 3600);
+    //   })
+    //   console.log('hours: ', hours)
+    //   props.setGetHours(hours)
+    // },
   }),
   lifecycle({
     componentWillMount() {
       this.props.setGetTarget(this.props.location.pathname)
-      this.props.secondsToHms()
+      this.props.setTypeUser(localStorage.getItem("user"))
+      // this.props.secondsToHms()
     }
   }),
 )(DetailRecapView)

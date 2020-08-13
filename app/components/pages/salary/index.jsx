@@ -35,7 +35,7 @@ const SalaryPage = ({
   isFetching,
   dataSalary,
   pagination,
-  typeUser,
+  getTypeUser,
 }) => {
   const modalBodyEditSallary = (
     <Form className="form-signin p-1 form-material">
@@ -107,7 +107,7 @@ const SalaryPage = ({
 
 
   return (
-    <Dashboard topik="salary" typeUser={typeUser}>
+    <Dashboard topik="salary" typeUser={getTypeUser}>
       <HeaderPage active="Gaji Karyawan" />
 
       <Card>
@@ -126,14 +126,14 @@ const SalaryPage = ({
               <tr key={Math.random()}>
                 <td>{index + 1}</td>
                 <td><Link to={`/salary/${item.id}`}>{item.employee_name}</Link></td>
-                <td>{item.position}</td>
+                <td>{item.position.position_name}</td>
                 <td>{item.salary_per_day}</td>
                 <td>{item.monthly_deduction}</td>
                 <td>{item.total_deduction}</td>
                 <td>{item.remaining_deduction}</td>
                 <td className="d-flex justify-content-start align-items-center">
                 {
-                  typeUser === 'super_admin' &&
+                  getTypeUser === 'super_admin' &&
                   (
                     <button
                       type="button"
@@ -145,15 +145,6 @@ const SalaryPage = ({
                     </button>
                   )
                 }
-                  <button
-                    type="button"
-                    className="btn icon-button"
-                    disabled={item.remaining_deduction !== 0 ? true : false}
-                    onClick={() => handleModal({ field: 'cash_receipt', id: '2' })}
-                  >
-                    <Icon type="edit" />
-                    <small className="ml-2">Kasbon</small>
-                  </button>
                 </td>
               </tr>
             )) : (
@@ -212,7 +203,7 @@ SalaryPage.propTypes = {
   isFetching: PropTypes.bool,
   dataSalary: PropTypes.array,
   pagination: PropTypes.array,
-  typeUser: PropTypes.string,
+  getTypeUser: PropTypes.string,
 }
 
 export default SalaryPage

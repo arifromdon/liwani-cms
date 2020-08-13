@@ -12,7 +12,7 @@ const DatePickerComponent = ({
   value,
 }) => (
   <div className="form-group">
-    <label htmlFor={name}>
+    <label htmlFor={name} style={{ fontSize: '12px' }}>
       {label}
     </label>
     <DatePicker

@@ -9,11 +9,18 @@ import {
   lifecycle,
   withState
 } from 'recompose'
+import { fetchDeduction } from 'actions/deduction'
 import { fetchDetailSalary } from 'actions/salary'
-import { historyRecapSalaryEmployee } from 'actions/recap'
+import { historyRecapSalary } from 'actions/recap'
 import DetailSalaryView from 'components/pages/salary/detail'
 
 export function mapStateToProps(state) {
+  const {
+    isFetching,
+    dataDeduction,
+    errorMessage,
+  } = state.root.deduction
+
   const {
     isFetchingEmployee,
     dataRecapEmployee,
@@ -24,20 +31,28 @@ export function mapStateToProps(state) {
     dataDetailSalary,
   } = state.root.detailSalary
 
-  const { typeUser } = state.root.auth
+  const {
+    isFetchingHistory,
+    dataHistoryRecap,
+  } = state.root.historyRecap
 
   return {
     isFetchingDetail,
     dataDetailSalary,
     isFetchingEmployee,
     dataRecapEmployee,
-    typeUser,
+    isFetchingHistory,
+    dataHistoryRecap,
+    isFetching,
+    dataDeduction,
+    errorMessage,
   }
 }
 
 const mapDispatchToProps = dispatch => ({
   fetchDetailSalary: bindActionCreators(fetchDetailSalary, dispatch),
-  historyRecapSalaryEmployee: bindActionCreators(historyRecapSalaryEmployee, dispatch),
+  historyRecapSalary: bindActionCreators(historyRecapSalary, dispatch),
+  fetchDeduction: bindActionCreators(fetchDeduction, dispatch),
 })
 
 export default compose(
@@ -46,6 +61,9 @@ export default compose(
     mapDispatchToProps,
   ),
   withState('getHours', 'setGetHours', ''),
+  withState('getHistoryRecap', 'setHistoryRecap', {}),
+  withState('getDeduction', 'setDeduction', {}),
+  withState('getTypeUser', 'setTypeUser', ''),
   withHandlers({
     pxToMm: props => (px) => {
       return Math.floor(px/document.getElementById('myMm').offsetHeight);
@@ -67,9 +85,31 @@ export default compose(
     componentWillMount() {
       let pathTarget = this.props.location.pathname
       let getIdPathname = pathTarget.substring(pathTarget.lastIndexOf('/') + 1)
-      this.props.fetchDetailSalary(getIdPathname)
-      this.props.historyRecapSalaryEmployee(getIdPathname)
-      this.props.secondsToHms()
+      const today = new Date();
+      const date = today.getFullYear()+'-'+(today.getMonth()+1);
+
+      const {
+        fetchDetailSalary,
+        historyRecapSalary,
+        secondsToHms,
+        dataHistoryRecap,
+        setHistoryRecap,
+        fetchDeduction,
+        dataDeduction,
+        setDeduction,
+        setTypeUser,
+      } = this.props
+
+      setTypeUser(localStorage.getItem("user"))
+      fetchDetailSalary(getIdPathname)
+      historyRecapSalary({ month: moment(date).format("MMMM YYYY") })
+      secondsToHms()
+      fetchDeduction()
+
+      const historyRecapNow = !isEmpty(dataHistoryRecap) && dataHistoryRecap.filter(item => item.employee_id === parseInt(getIdPathname))
+      const getDataDeduction = !isEmpty(dataDeduction) && dataDeduction.filter(item => item.employee_id === parseInt(getIdPathname))
+      setHistoryRecap(historyRecapNow)
+      setDeduction(getDataDeduction)
     }
   }),
 )(DetailSalaryView)

@@ -3,6 +3,7 @@ import Input from './Form/Input'
 import Button from './Button/Button'
 import Checkbox from './Form/Checkbox'
 import FieldInput from './Form/FieldInput'
+import FormAntd from './Form/FormAntd'
 import Dashboard from './Dashboard/Dashboard'
 import BasicTable from './Tables/BasicTable'
 import HeaderPage from './Header/HeaderPage'
@@ -24,6 +25,7 @@ export {
   Checkbox,
   Dashboard,
   FieldInput,
+  FormAntd,
   BasicTable,
   HeaderPage,
   LoadingSpin,

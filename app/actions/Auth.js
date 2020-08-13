@@ -61,6 +61,8 @@ export const loginUser = data => (
       domain: Browser.getRootDomain(),
     })
 
+    localStorage.setItem("user", data.user.status);
+
     history.push('/dashboard')
   }
 )

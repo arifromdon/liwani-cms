@@ -1,5 +1,5 @@
 import React from 'react'
-import { first, isEmpty, sum } from 'lodash'
+import { first, isEmpty, sum, startCase, toLower } from 'lodash'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { Spinner, Container, Row, Col, Table } from 'react-bootstrap'
@@ -22,10 +22,15 @@ const DetailSalary = ({
   isFetchingDetail,
   dataDetailSalary,
   dataRecapEmployee,
-  typeUser,
+  getTypeUser,
   getHours,
+  getHistoryRecap,
+  isFetching,
+  getDeduction,
 }) => {
-  const recapEmployee = !isEmpty(dataRecapEmployee) && first(dataRecapEmployee)
+
+  const recapEmployee = !isEmpty(getHistoryRecap) && first(getHistoryRecap)
+  const dataDeductionEmployee = !isEmpty(getDeduction) && first(getDeduction)
 
   const PrintSalaryPdf = ({id, label}) => {
     const pxToMm = (px) => {
@@ -112,7 +117,7 @@ const DetailSalary = ({
                         <tr>
                           <td>Jabatan</td>
                           <td className="pr-2">:</td>
-                          <td>{dataDetailSalary.position}</td>
+                          <td>{!isEmpty(dataDetailSalary.position) && startCase(toLower(dataDetailSalary.position.position_name))}</td>
                         </tr>
                         <tr>
                           <td>Periode Pembayaran</td>
@@ -147,15 +152,19 @@ const DetailSalary = ({
                       <tbody>
                         <tr>
                           <td>Upah Per Hari</td>
-                          <td className="text-right">Rp {toRp(dataDetailSalary.salary_per_day)}</td>
+                          <td className="text-right">Rp {!isEmpty(recapEmployee) ? toRp(recapEmployee.salary_per_day) : 0}</td>
                         </tr>
                         <tr>
-                          <td>Lembur</td>
-                          <td className="text-right">Rp 0</td>
+                          <td>Tunjangan Jabatan</td>
+                          <td className="text-right">Rp {!isEmpty(recapEmployee.position) ? toRp(recapEmployee.position.positional_allowance) : 0}</td>
                         </tr>
                         <tr>
-                          <td>Tunjangan</td>
-                          <td className="text-right">Rp 0</td>
+                          <td>Tunjangan Transportasi</td>
+                          <td className="text-right">Rp {!isEmpty(recapEmployee.position) ? toRp(recapEmployee.position.transportation_allowance) : 0}</td>
+                        </tr>
+                        <tr>
+                          <td>Tunjangan Makan</td>
+                          <td className="text-right">Rp {!isEmpty(recapEmployee.position) ? toRp(recapEmployee.position.meal_allowances) : 0}</td>
                         </tr>
                         <tr>
                           <td className="font-weight-bold pt-3">Pendapatan Kotor</td>
@@ -180,11 +189,25 @@ const DetailSalary = ({
                       <tbody>
                         <tr>
                           <td>Potongan per Bulan</td>
-                          <td className="text-right">Rp {toRp(dataDetailSalary.monthly_deduction)}</td>
+                          <td className="text-right">Rp {toRp(dataDeductionEmployee.cash_receipt_term)}</td>
                         </tr>
                         <tr>
                           <td>Total Potongan</td>
-                          <td className="text-right">Rp {toRp(dataDetailSalary.total_deduction)}</td>
+                          <td className="text-right">Rp {toRp(dataDeductionEmployee.total_cash_receipt)}</td>
+                        </tr>
+                        <tr>
+                          <td>Sisa Potongan</td>
+                          <td className="text-right">Rp {toRp(dataDeductionEmployee.rest_receipt_term)}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <small className="my-4">
+                            {
+                              dataDeductionEmployee.rest_receipt_term === dataDeductionEmployee.total_cash_receipt ?
+                              '*Potongan mulai berlaku di periode selanjutnya' : ''
+                            }
+                            </small>
+                          </td>
                         </tr>
                         <tr>
                           <td>Jumlah</td>
@@ -229,7 +252,7 @@ const DetailSalary = ({
   };
 
   return(
-    <Dashboard topik="salary" typeUser={typeUser}>
+    <Dashboard topik="salary" typeUser={getTypeUser}>
       <div className="d-flex align-items-center">
         <Link to="/salary" className="d-flex align-items-center mr-3 mb-3">
           <Icon type="left"/>
@@ -265,34 +288,36 @@ const DetailSalary = ({
                   </Col>
                   <Col md={6} sm={12} className="mb-3">
                     <label>Jabatan</label>
-                    <p className="font-weight-bold">{dataDetailSalary.position}</p>
+                    <p className="font-weight-bold">{!isEmpty(dataDetailSalary.position) && startCase(toLower(dataDetailSalary.position.position_name))}</p>
                   </Col>
                   <Col md={6} sm={12} className="mb-3">
                     <label>Upah per Hari</label>
-                    <p className="font-weight-bold">{toRp(dataDetailSalary.salary_per_day)}</p>
+                    <p className="font-weight-bold">Rp {!isEmpty(recapEmployee) ? toRp(recapEmployee.salary_per_day) : 0}</p>
                   </Col>
                   <Col md={6} sm={12} className="mb-3">
                     <label>Potongan per Bulan</label>
-                    <p className="font-weight-bold">{dataDetailSalary.monthly_deduction}</p>
+                    <p className="font-weight-bold">Rp {!isEmpty(dataDeductionEmployee) ? toRp(dataDeductionEmployee.cash_receipt_term) : 0}</p>
                   </Col>
                   <Col md={6} sm={12} className="mb-3">
                     <label>Total Potongan</label>
-                    <p className="font-weight-bold">{dataDetailSalary.total_deduction}</p>
+                    <p className="font-weight-bold">Rp {!isEmpty(dataDeductionEmployee) ? toRp(dataDeductionEmployee.total_cash_receipt) : 0}</p>
                   </Col>
                   <Col md={6} sm={12} className="mb-3">
                     <label>Sisa Potongan</label>
-                    <p className="font-weight-bold">{dataDetailSalary.remaining_deduction}</p>
-                  </Col>
-                  <Col md={6} sm={12} className="mb-3">
-                    <label>Total Jam Masuk</label>
-                    <p className="font-weight-bold">{!isEmpty(getHours) ? getHours : 0} Jam</p>
+                    <p className="font-weight-bold">Rp {!isEmpty(dataDeductionEmployee) ? toRp(dataDeductionEmployee.rest_receipt_term) : 0}</p>
                   </Col>
                   <Col md={6} sm={12} className="mb-3">
                     <label>Total Upah</label>
-                    <p className="font-weight-bold">{!isEmpty(recapEmployee.total_salary) ? toRp(recapEmployee.total_salary) : 0}</p>
+                    <p className="font-weight-bold">Rp {!isEmpty(recapEmployee) ? toRp(recapEmployee.total_salary) : 0}</p>
                   </Col>
                 </Row>
               </Container>
+              <small className={`my-${dataDeductionEmployee.rest_receipt_term === dataDeductionEmployee.total_cash_receipt ? '4' : '0'}`}>
+                {
+                  dataDeductionEmployee.rest_receipt_term === dataDeductionEmployee.total_cash_receipt ?
+                  '*Potongan mulai berlaku di periode selanjutnya' : ''
+                }
+              </small>
             </React.Fragment>
           )
         }
@@ -313,7 +338,10 @@ const DetailSalary = ({
 DetailSalary.propTypes = {
   isFetchingDetail: PropTypes.bool,
   dataDetailSalary: PropTypes.object,
-  typeUser: PropTypes.string,
+  getHistoryRecap: PropTypes.object,
+  getTypeUser: PropTypes.string,
+  isFetching: PropTypes.bool,
+  getDeduction: PropTypes.object,
 }
 
 export default DetailSalary

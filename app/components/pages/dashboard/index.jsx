@@ -5,6 +5,7 @@ import {
   Dashboard,
   BasicTable,
   Card,
+  FormAntd,
   HeaderPage,
   LoadingSkeleton,
   Button,
@@ -12,14 +13,16 @@ import {
   SelectComponent,
   ModalItemAntd,
   Input,
+  FieldInput,
   BarChart,
   DatePickerComponent
 } from 'components/elements'
+
 import { Icon, Empty } from 'antd'
 import { Spinner, Container, Row, Col, Form } from 'react-bootstrap'
-import { isEmpty } from 'lodash'
+import { isEmpty, startCase, toLower } from 'lodash'
 
-const columns = ['No', 'Nama Karyawan', 'Jabatan', 'Telepon', 'Email', 'Status', 'Action']
+const columns = ['No', 'Nama Karyawan', 'Telepon', 'Jabatan', 'Salary', 'Email', 'Status', 'Action']
 
 const DashboardPage = ({
   handleSelect,
@@ -53,7 +56,10 @@ const DashboardPage = ({
   isFetchingHistory,
   dataHistoryRecap,
   currentUser,
-  typeUser,
+  getTypeUser,
+  isFetchingPosition,
+  dataPosition,
+  listPosition,
 }) => {
 
   const modalBodyDelete = (
@@ -84,60 +90,78 @@ const DashboardPage = ({
     <Form className="form-signin p-1 form-material">
       <Container>
         <Row>
-          <Col md={12}>
+          <Col md={6}>
             <Input
               onChange={onChange}
               value={form.employee_name || ''}
               name="employee_name"
               type="text"
-              placeholder="Nama Karyawan"
+              placeholder="*Nama Karyawan"
             />
           </Col>
-          <Col md={12}>
+          <Col md={6}>
             <Input
               onChange={onChange}
               value={form.phone_number || ''}
               name="phone_number"
               type="text"
-              placeholder="No. Telepon"
+              placeholder="*No. Telepon"
             />
           </Col>
-          <Col md={12}>
+          <Col md={6}>
             <Input
               onChange={onChange}
               value={form.email || ''}
               name="email"
               type="email"
-              placeholder="Email Karyawan"
+              placeholder="*Email Karyawan"
             />
           </Col>
-          <Col md={12}>
+          <Col md={6}>
             <Input
               onChange={onChange}
-              value={form.salary_per_day || ''}
-              name="salary_per_day"
+              value={form.leave_rasio || ''}
+              name="leave_rasio"
               type="text"
-              placeholder="Upah Harian"
+              placeholder="*Cuti tahunan"
             />
           </Col>
-          <Col md={12}>
+          <Col md={6}>
+            <Input
+              onChange={onChange}
+              value={form.id_bank || ''}
+              name="id_bank"
+              type="text"
+              placeholder="*No. Rekening"
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              onChange={onChange}
+              value={form.bank_name || ''}
+              name="bank_name"
+              type="text"
+              placeholder="*Nama Bank"
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              onChange={onChange}
+              value={form.user_bank || ''}
+              name="user_bank"
+              type="text"
+              placeholder="*Nama Pemilik Rekening"
+            />
+          </Col>
+          <Col md={6}>
             <DatePickerComponent
-              label="Pilih Periode"
+              label="*Pilih Periode"
               placeholder='Masukan Tanggal Periode'
               onChange={onChangeDate}
             />
           </Col>
-          <Col md={12} className="mb-3">
-            <label htmlFor='position'>Pilih Jabatan</label>
-            <Select
-              name='position'
-              value={positionSelected}
-              options={getPosition}
-              onChange={e => handleSelect({ value: e, field: 'position' })}
-            />
-          </Col>
-          <Col md={12} className="mb-3">
-            <label htmlFor='status'>Pilih Status</label>
+          <Col md={6} className="mb-3">
+            <label htmlFor='status' style={{ fontSize: '12px' }}>*Pilih Status</label>
             <Select
               name='status'
               value={statusSelected}
@@ -145,6 +169,57 @@ const DashboardPage = ({
               onChange={e => handleSelect({ value: e, field: 'status' })}
             />
           </Col>
+          <Col md={6} className="mb-3">
+            <label htmlFor='position' style={{ fontSize: '12px' }}>*Pilih Jabatan</label>
+            <Select
+              name='position'
+              value={positionSelected}
+              options={listPosition}
+              onChange={e => handleSelect({ value: e, field: 'position' })}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              onChange={onChange}
+              value={form.positional_allowance || ''}
+              name="positional_allowance"
+              type="text"
+              placeholder="Tunjangan Jabatan"
+              disabled={true}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              onChange={onChange}
+              value={form.transportation_allowance || ''}
+              name="transportation_allowance"
+              type="text"
+              placeholder="Tunjangan Transportasi"
+              disabled={true}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              onChange={onChange}
+              value={form.meal_allowances || ''}
+              name="meal_allowances"
+              type="text"
+              placeholder="Tunjangan Makan"
+              disabled={true}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              onChange={onChange}
+              value={form.salary_per_day || ''}
+              name="salary_per_day"
+              type="text"
+              placeholder="Upah Harian"
+              disabled={true}
+            />
+          </Col>
+        </Row>
+        <Row>
           <Col md={6} className="mx-auto">
             <Button
               onClick={(e) => handleCreateEmployee(e)}
@@ -189,6 +264,42 @@ const DashboardPage = ({
             />
           </Col>
           <Col md={12}>
+            <Input
+              onChange={onChange}
+              value={form.leave_rasio || ''}
+              name="leave_rasio"
+              type="text"
+              placeholder="Cuti Tahunan"
+            />
+          </Col>
+          <Col md={12}>
+            <Input
+              onChange={onChange}
+              value={form.id_bank || ''}
+              name="id_bank"
+              type="text"
+              placeholder="No Rekening"
+            />
+          </Col>
+          <Col md={12}>
+            <Input
+              onChange={onChange}
+              value={form.bank_name || ''}
+              name="bank_name"
+              type="text"
+              placeholder="Nama Bank"
+            />
+          </Col>
+          <Col md={12}>
+            <Input
+              onChange={onChange}
+              value={form.user_bank || ''}
+              name="user_bank"
+              type="text"
+              placeholder="Nama Pemilik Rekening"
+            />
+          </Col>
+          <Col md={12}>
             <DatePickerComponent
               label="Pilih Periode"
               placeholder='Masukan Tanggal Periode'
@@ -196,16 +307,16 @@ const DashboardPage = ({
             />
           </Col>
           <Col md={12} className="mb-3">
-            <label htmlFor='position'>Pilih Jabatan</label>
+            <label htmlFor='position' style={{ fontSize: '12px' }}>*Pilih Jabatan</label>
             <Select
               name='position'
-              value={positionSelected || ''}
-              options={getPosition}
+              value={positionSelected}
+              options={listPosition}
               onChange={e => handleSelect({ value: e, field: 'position' })}
             />
           </Col>
           <Col md={12} className="mb-3">
-            <label htmlFor='status'>Pilih Status</label>
+            <label htmlFor='status' style={{ fontSize: '12px' }}>Pilih Status</label>
             <Select
               name='status'
               value={statusSelected || ''}
@@ -226,11 +337,11 @@ const DashboardPage = ({
   )
 
   return(
-    <Dashboard topik="dashboard" typeUser={typeUser}>
+    <Dashboard topik="dashboard" typeUser={getTypeUser}>
       {
-        typeUser === "super_admin" &&
+        getTypeUser === "super_admin" &&
         <React.Fragment>
-          <HeaderPage active="Dashboard"/>
+          <HeaderPage active="Grafik Pengeluaran"/>
           <BarChart dataHistory={dataHistoryRecap} fetching={isFetchingHistory} />
         </React.Fragment>
       }
@@ -245,7 +356,7 @@ const DashboardPage = ({
                 label='Pilih Tipe Jabatan'
                 name='Position Tipe'
                 value={filterPositionSelected}
-                options={getPosition}
+                options={listPosition}
                 onChange={e => handleSelectFilter({ value: e, field: 'filter-position' })}
               />
             </Col>
@@ -286,8 +397,9 @@ const DashboardPage = ({
                 <tr key={Math.random()}>
                   <td>{index + 1}</td>
                   <td>{item.employee_name}</td>
-                  <td>{item.position}</td>
                   <td>{item.phone_number}</td>
+                  <td>{startCase(toLower(item.position.position_name))}</td>
+                  <td>{item.position.salary}</td>
                   <td>{item.email}</td>
                   <td>{item.status}</td>
                   <td>
@@ -342,6 +454,7 @@ const DashboardPage = ({
           onCancel={() => handleModalClose({ field: 'create' })}
           cancelButtonProps={{ style: { display: 'none' } }}
           okButtonProps={{ style: { display: 'none' } }}
+          width={800}
         />
 
         <ModalItemAntd
@@ -397,7 +510,9 @@ DashboardPage.propTypes = {
   dataEmployee: PropTypes.array,
   isFetchingHistory: PropTypes.bool,
   dataHistoryRecap: PropTypes.array,
-  // typeUser: PropTypes.string,
+  isFetchingPosition: PropTypes.bool,
+  dataPosition: PropTypes.array,
+  getTypeUser: PropTypes.string,
 }
 
 export default DashboardPage
