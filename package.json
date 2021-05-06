@@ -16,7 +16,7 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
     "formik": "^2.1.4",
-    "highcharts": "^8.1.2",
+    "highcharts": "^9.0.0",
     "highcharts-react-official": "^3.0.0",
     "html2canvas": "^1.0.0-rc.5",
     "intl": "^1.2.5",
