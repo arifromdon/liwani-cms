@@ -24,7 +24,7 @@
     "js-cookie": "^2.2.0",
     "jspdf": "^1.5.3",
     "localforage": "^1.7.3",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "paginator": "^1.0.0",
     "popper.js": "^1.15.0",
     "prop-types": "^15.7.2",
